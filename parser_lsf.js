@@ -11,6 +11,14 @@ var crypto = require("crypto");
 var daysToParse = 5;
 
 
+// mongodb
+var mongohost="localhost:27017";
+var mongodb=process.env.WUWDB || "wuw";
+var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
+// connect
+mongoose.connect(mongoConnection);
+
+
 // simple hash-algo to generate 12 byte long objectId
 var hashCode = function(s){
     var hash = crypto.createHash('md5').update(s).digest('hex').substring(0, 12);
@@ -93,7 +101,7 @@ var createUrls = function() {
 var startParser = function() {
     // connect to mongodb (if not already)
     if(mongoose.connection.readyState === 0) {
-        mongoose.connect("mongodb://localhost:27017/wuwNew");
+        mongoose.connect(mongoConnection);
     }
 
     // create model from our schema (needed for drop)
