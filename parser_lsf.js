@@ -8,7 +8,7 @@ var crypto = require("crypto");
 
 
 // how many days should we parse?
-var daysToParse = 2;
+var daysToParse = 5;
 
 
 // simple hash-algo to generate 12 byte long objectId
