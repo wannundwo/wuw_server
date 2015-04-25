@@ -10,7 +10,18 @@ var crypto = require("crypto");
 // how many weeks should we parse?
 var weeksToParse = 1;
 
-var categories = ["Vorspeise", "Das Komplettpaket", "Die solide Basis", "Bio pur", "Das grüne Glück", "Der Renner", "Beilagen", "Nachttisch"];
+// mensa constants, should be outsourced to mongo virtuals
+var mensaCategories = ["Vorspeise", "Das Komplettpaket", "Die solide Basis", "Bio pur", "Das grüne Glück", "Der Renner", "Beilagen", "Nachtisch"];
+var mensaAdditives = ["mit Konservierungsstoff", "mit Farbstoff", "mit Antioxidationsmittel", "mit Geschmacksverstärker", "geschwefelt", "gewachst", "mit Phosphat", "mit Süßungsmittel", "enthält eine Phenylalaninquelle", "geschwärzt"];
+var mensaAllergens = { "En": "Erdnuss", "Fi": "Fisch", "Gl": "Glutenhaltiges Getreide", "Ei": "Eier", "Kr": "Krebstiere (Krusten- und Schalentiere)", "Lu": "Lupine", "La": "Milch und Laktose", "Nu": "Schalenfrüchte (Nüsse)", "Sw": "Schwefeldioxid (SO2) und Sulfite", "Sl": "Sellerie", "Sf": "Senf", "Se": "Sesam", "So": "Soja", "Wt": "Weichtiere"};
+
+
+// mongodb
+var mongohost="localhost:27017";
+var mongodb=process.env.WUWDB || "wuw";
+var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
+// connect
+mongoose.connect(mongoConnection);
 
 
 // simple hash-algo to generate 12 byte long objectId
@@ -26,94 +37,64 @@ var parse = function(html, cb) {
 
     // init cheerio with our html
     var $ = cheerio.load(html);
-
     var fullWeek = $("div.print-content div.view div.view-content div.item-list ul").children();
 
-    //console.log(fullWeek);
+    // parse each week of food
+    async.each(fullWeek, function(dayPlan, daycb) {
 
-    // get date for this day
-    // var curDate = $("h2").text().split(", ")[1];
-    // var curDateArr = curDate.split(".");
-    // var intDate = curDateArr[1] + "/" + curDateArr[0] + "/" + curDateArr[2];
+        var curDate = $(dayPlan).find("span.date-day-numeric").html().trim();
+        var curDateArr = curDate.split(".");
+        var intDate = curDateArr[1] + "/" + curDateArr[0] + "/" + curDateArr[2];
 
+        var i = 0;
+        async.each($(dayPlan).find("td.speiseangebotbody"), function(e, dishcb) {
 
-    // parse each single lecture
-    async.each(fullWeek, function(weekPlan, trcb) {
+            // split main dishes from the side dishes & sweets
+            if(i !== 6 && i !== 7) {
 
-        console.log("-----------------------------------------------A");
-        var curDate = $(weekPlan).find("span.date-day-numeric").html().trim();
-        console.log(curDate);
+                // create dish from our Model
+                var curDish = new Dish();
+                curDish.dishName = $(e).find("span.name").text();
+                curDish.category = mensaCategories[i];
+                curDish.date = Date.parse(intDate);
 
-        $(weekPlan).find("td.speiseangebotbody").each(function(i, e) {
-            //console.log("me: " + i + " - " + $(e).html());
+                var additiveNumber = $(e).find("span.additive_number");
 
-            console.log(categories[i] + ": " + $(e).find("span.name").html());
+                // prepare attributes, allergens & additives
+                if(additiveNumber) {
+                    $(additiveNumber).each(function(i, e) {
+                        // split to single strings/numbers
+                        var adds = $(e).html().split(",");
+                        // allergens
+                        if(i === 0) {
+                            adds.forEach(function(add) {
+                                //curDish.allergens.push(add);
+                                curDish.allergens.push(mensaAllergens[add]);
+                            });
+                        // additives
+                        } else if(i === 1) {
+                            adds.forEach(function(add) {
+                                //curDish.additives.push(add);
+                                curDish.additives.push(mensaAdditives[(parseInt(add)-1)]);
+                            });
+                        }
+                    });
+                }
 
-            var allergens;
-            var additiveNumber = $(e).find("span.additive_number");
-            // prepare attributes, allergens & additives
-            if(additiveNumber) {
-                $(additiveNumber).each(function(i, e) {
-                    console.log(i);
-                    var adds = $(e).html().split(",");
-                    console.log(typeof adds[0]);
-                    if(typeof adds[0] === "string") {
-                        allergens = adds;
-                    } else if(typeof adds[0] === "number") {
-                        console.log("is number");
-                    }
-                    console.log(adds[0]);
-                });
+                // save to database
+                curDish.save(dishcb);
+            } else {
+                dishcb();
             }
 
-            // create Dish from our Model
-            var curDish = new Dish();
-            // set attributes
-            curDish.dishName = $(e).find("span.name").html();
-            curDish.allergens = allergens;
-
-            //console.log(curDish);
-            console.log("-------------");
+            i++;
+        }, function(){
+            // day done
+            daycb();
         });
-        // // prepare docents
-        // var docents = [];
-        // $(lectureLine).children().eq(7).text().trim().split(" , ").forEach(function(docent){
-        //     if(docent !== "") {
-        //         docents.push(docent.replace(/.*Professor/g, "").replace(/ */g, ""));
-        //     }
-        // });
-        //
-        // // prepare group & room (not really needed but more readable)
-        // var group = $(lectureLine).children().eq(6).text().trim();
-        // var room = $(lectureLine).children().eq(5).text().trim();
-        //
-        // // create Lecture from our Model
-        // var Lec = new Lecture();
-        // // set attributes
-        // Lec.lectureName = $(lectureLine).children().eq(3).text().trim();
-        // Lec.startTime = new Date(intDate + " " + $(lectureLine).children().eq(0).text().trim());
-        // Lec.endTime = new Date(intDate + " " + $(lectureLine).children().eq(1).text().trim());
-        // Lec.docents = docents;
-        // Lec.hashCode = hashCode(Lec.lectureName+curDate+Lec.startTime);
-        // Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
-        //
-        // // create an object from our document
-        // var upsertData = Lec.toObject();
-        // // delete attributes to upsert
-        // delete upsertData.rooms;
-        // delete upsertData.groups;
-        //
-        // // lectures without a group/room are useless...
-        // if(group !== "" && room !== "") {
-        //     // save lecture to db & call callback
-        //     Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, trcb);
-        // } else {
-        //     trcb();
-        // }
 
-        //console.log("-----------------------------------------------E");
     }, function() {
-        // day done
+        // week done
         cb();
     });
 };
@@ -152,7 +133,7 @@ var createUrls = function() {
 var startParser = function() {
     // connect to mongodb (if not already)
     if(mongoose.connection.readyState === 0) {
-        mongoose.connect("mongodb://localhost:27017/wuwNew");
+        mongoose.connect(mongoConnection);
     }
 
     // create model from our schema (needed for drop)
@@ -161,7 +142,7 @@ var startParser = function() {
     // create the urls to parse
     var urls = createUrls();
 
-    console.log("started parsing of " + weeksToParse + " days (this inlcuded)...");
+    console.log("started parsing of " + weeksToParse + " weeks (this inlcuded)...");
 
     // drop current collection to get a fresh result
     mongoose.connection.collections.dishes.drop(function(err) {
@@ -171,7 +152,6 @@ var startParser = function() {
 
         // parse every url (max. 5 parallel, dont fuck the studentenwerk)
         async.eachLimit(urls, 5, function(url, cb) {
-            console.log(url);
             request(url, function(error, response, html) {
                 if(!error) {
                     // parse html with all dishes for choosen date
