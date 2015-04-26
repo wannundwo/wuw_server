@@ -10,11 +10,6 @@ var crypto = require("crypto");
 // how many weeks should we parse?
 var weeksToParse = 3;
 
-// mensa constants, should be outsourced to mongo virtuals
-var mensaCategories = ["Vorspeise", "Das Komplettpaket", "Die solide Basis", "Bio pur", "Das grüne Glück", "Der Renner", "Beilagen", "Nachtisch"];
-var mensaAdditives = ["mit Konservierungsstoff", "mit Farbstoff", "mit Antioxidationsmittel", "mit Geschmacksverstärker", "geschwefelt", "gewachst", "mit Phosphat", "mit Süßungsmittel", "enthält eine Phenylalaninquelle", "geschwärzt"];
-var mensaAllergens = { "En": "Erdnuss", "Fi": "Fisch", "Gl": "Glutenhaltiges Getreide", "Ei": "Eier", "Kr": "Krebstiere (Krusten- und Schalentiere)", "Lu": "Lupine", "La": "Milch und Laktose", "Nu": "Schalenfrüchte (Nüsse)", "Sw": "Schwefeldioxid (SO2) und Sulfite", "Sl": "Sellerie", "Sf": "Senf", "Se": "Sesam", "So": "Soja", "Wt": "Weichtiere"};
-
 
 // mongodb
 var mongohost="localhost:27017";
@@ -55,7 +50,7 @@ var parse = function(html, cb) {
                 // create dish from our Model
                 var curDish = new Dish();
                 curDish.dishName = $(e).find("span.name").text();
-                curDish.category = mensaCategories[i];
+                curDish.shortCat = i;
                 curDish.date = Date.parse(intDate);
 
                 var additiveNumber = $(e).find("span.additive_number");
@@ -68,14 +63,12 @@ var parse = function(html, cb) {
                         // allergens
                         if(i === 0) {
                             adds.forEach(function(add) {
-                                //curDish.allergens.push(add);
-                                curDish.allergens.push(mensaAllergens[add]);
+                                curDish.shortAllerg.push(add);
                             });
                         // additives
                         } else if(i === 1) {
                             adds.forEach(function(add) {
-                                //curDish.additives.push(add);
-                                curDish.additives.push(mensaAdditives[(parseInt(add)-1)]);
+                                curDish.shortAdd.push(add);
                             });
                         }
                     });
