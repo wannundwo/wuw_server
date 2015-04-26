@@ -44,5 +44,9 @@ DishSchema.virtual("allergens").get(function () {
     return allergs;
 });
 
+DishSchema.virtual("color").get(function () {
+    return color.stringToColor(this.dishName);
+});
+
 // create model from our schema & export it
 module.exports = mongoose.model("Dish", DishSchema, "dishes");
