@@ -55,6 +55,17 @@ var parse = function(html, cb) {
 
                 var additiveNumber = $(e).find("span.additive_number");
 
+                // get the price
+                var prices = $(e).first().contents().filter(function() {
+                    return this.type === 'text';
+                }).text().trim().split(" / ");
+
+                // if prices exists, split to internal and external
+                if(prices.length === 2) {
+                    curDish.priceInternal = prices[0].replace(",", ".");
+                    curDish.priceExternal = prices[1].replace(",", ".");
+                }
+
                 // prepare attributes, allergens & additives
                 if(additiveNumber) {
                     $(additiveNumber).each(function(i, e) {
@@ -76,6 +87,10 @@ var parse = function(html, cb) {
 
                 // save to database
                 curDish.save(dishcb);
+
+            // side dishes & sweets
+            // } else if (i === 6 || i === 7) {
+            //     console.log($(e));
             } else {
                 dishcb();
             }
