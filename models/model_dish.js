@@ -29,11 +29,19 @@ DishSchema.virtual("category").get(function () {
 });
 
 DishSchema.virtual("additives").get(function () {
-    return mensaAdditives[this.shortAdd];
+    var adds = [];
+    this.shortAdd.forEach(function(a) {
+        adds.push(mensaAdditives[a]);
+    });
+    return adds;
 });
 
 DishSchema.virtual("allergens").get(function () {
-    return mensaAllergens[this.shortAllerg];
+    var allergs = [];
+    this.shortAllerg.forEach(function(a) {
+        allergs.push(mensaAllergens[a]);
+    });
+    return allergs;
 });
 
 // create model from our schema & export it
