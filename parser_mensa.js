@@ -8,7 +8,7 @@ var crypto = require("crypto");
 
 
 // how many weeks should we parse?
-var weeksToParse = 1;
+var weeksToParse = 3;
 
 // mensa constants, should be outsourced to mongo virtuals
 var mensaCategories = ["Vorspeise", "Das Komplettpaket", "Die solide Basis", "Bio pur", "Das grüne Glück", "Der Renner", "Beilagen", "Nachtisch"];

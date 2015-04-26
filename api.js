@@ -51,6 +51,7 @@ var apiLectures = require("./routes/lectures");
 var apiDeadlines = require("./routes/deadlines");
 var apiRooms = require("./routes/rooms");
 var apiGroups = require("./routes/groups");
+var apiDishes = require("./routes/dishes");
 
 
 // create the express app, router & configure port
@@ -87,6 +88,7 @@ router.use("/lectures", apiLectures);
 router.use("/deadlines", apiDeadlines);
 router.use("/rooms", apiRooms);
 router.use("/groups", apiGroups);
+router.use("/dishes", apiDishes);
 // register base & default router
 app.use(apiBaseUrl, router);
 
