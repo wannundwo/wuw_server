@@ -12,13 +12,13 @@ var mensaAllergens = { "En": "Erdnuss", "Fi": "Fisch", "Gl": "Glutenhaltiges Get
 // create mongodb schema for our lectures
 var DishSchema = new mongoose.Schema({
     dishName: String,
-    shortCat: Number,
     date: Date,
     priceInternal: Number,
     priceExternal: Number,
     attributes: [String],
-    shortAllerg: [String],
-    shortAdd: [Number]
+    shortCat: Number,
+    shortAdd: [Number],
+    shortAllerg: [String]
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
@@ -29,7 +29,7 @@ DishSchema.virtual("category").get(function () {
 });
 
 DishSchema.virtual("additives").get(function () {
-    return mensaAdditives[this.shortCat];
+    return mensaAdditives[this.shortAdd];
 });
 
 DishSchema.virtual("allergens").get(function () {
