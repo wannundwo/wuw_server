@@ -45,7 +45,7 @@ DishSchema.virtual("allergens").get(function () {
 });
 
 DishSchema.virtual("color").get(function () {
-    return color.stringToColor(this.dishName);
+    return color.stringToColor(this.category);
 });
 
 // create model from our schema & export it
