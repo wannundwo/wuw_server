@@ -8,7 +8,7 @@ var crypto = require("crypto");
 
 
 // how many days should we parse?
-var daysToParse = 5;
+var daysToParse = 21;
 
 
 // mongodb
