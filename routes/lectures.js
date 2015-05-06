@@ -47,12 +47,17 @@ router.route("/groups")
 
     // get lectures for specific groups (POST /$apiBaseUrl/lectures/groups)
     .post(function(req, res) {
+        
+        // today at 0:00
+        var today = new Date();
+        today.setHours(0,0,0,0);
+        
+        var reqGroups = JSON.parse(req.body.groups || "[]");
+        var query = { groups: { $in: reqGroups }, "endTime": {"$gte": today}};
 
-        var reqGroups = JSON.parse(req.body.groups);
-        var query = { groups: { $in: reqGroups }};
-
+        // if no reqGroups provided, return all lectures
         if (reqGroups.length === 0) {
-            query = {};
+            delete query.groups;
         }
 
         // check if we got a proper array
