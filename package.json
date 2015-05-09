@@ -19,7 +19,8 @@
     "morgan": "latest",
     "request": "latest",
     "util": "latest",
-    "pleasejs": "latest"
+    "pleasejs": "latest",
+    "xml2js": "latest"
   },
   "scripts": {
     "test": "mocha"
