@@ -1,7 +1,7 @@
 "use strict";
 
 var mongoose = require("mongoose");
-var color = require("../color");
+var utils = require("../utils");
 
 // mensa constants, should be outsourced to mongo virtuals
 var mensaCategories = ["Vorspeise", "Das Komplettpaket", "Die solide Basis", "Bio pur", "Das grüne Glück", "Der Renner", "Beilagen", "Nachtisch"];
@@ -45,7 +45,7 @@ DishSchema.virtual("allergens").get(function () {
 });
 
 DishSchema.virtual("color").get(function () {
-    return color.stringToColor(this.category);
+    return utils.stringToColor(this.category);
 });
 
 // create model from our schema & export it

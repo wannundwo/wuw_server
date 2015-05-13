@@ -1,6 +1,7 @@
 "use strict";
+
 var Please = require("pleasejs");
-var crypto   = require("crypto");
+var crypto = require("crypto");
 
 var stringToColor = function(str) {
 

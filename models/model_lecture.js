@@ -1,7 +1,7 @@
 "use strict";
 
 var mongoose = require("mongoose");
-var color = require("../color");
+var utils = require("../utils");
 
 // create mongodb schema for our lectures
 var LectureSchema = new mongoose.Schema({
@@ -18,7 +18,7 @@ var LectureSchema = new mongoose.Schema({
 });
 
 LectureSchema.virtual("color").get(function () {
-    return color.stringToColor(this.lectureName);
+    return utils.stringToColor(this.lectureName);
 });
 
 // create model from our schema & export it

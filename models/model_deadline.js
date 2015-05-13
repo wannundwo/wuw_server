@@ -1,7 +1,7 @@
 "use strict";
 
 var mongoose = require("mongoose");
-var color = require("../color");
+var utils = require("../utils");
 
 // create mongodb schema for our deadlines
 var DeadlineSchema = new mongoose.Schema({
@@ -16,7 +16,7 @@ var DeadlineSchema = new mongoose.Schema({
 });
 
 DeadlineSchema.virtual("color").get(function () {
-    return color.stringToColor(this.group);
+    return utils.stringToColor(this.group);
 });
 
 // create model from our schema & export it
