@@ -9,7 +9,7 @@ var utils = require("./utils");
 
 
 // how many days should we parse?
-var daysToParse = 21;
+var daysToParse = process.env.WUWDAYS || 21;
 
 
 // mongodb
