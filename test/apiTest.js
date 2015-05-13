@@ -3,6 +3,7 @@
 var assert = require('assert');
 var fs = require('fs');
 var request = require('request');
+var mongoose = require("mongoose");
 var api = require('../api');
 var parser = require('../parser_lsf');
 
@@ -19,6 +20,22 @@ var roomsBaseUrl = apiBaseUrl + "rooms";
 describe('API', function(){
 
     before(function () {
+
+        // add some test data
+        var mongohost="localhost:27017";
+        var mongodb=process.env.WUWDB || "wuw";
+        var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
+        if(mongoose.connection.readyState === 0) { mongoose.connect(mongoConnection); }
+        var Lecture = require("../models/model_lecture");
+        var lectures = [
+            new Lecture({ "_id" : mongoose.Types.ObjectId("336665343663383066643430"), "rooms" : [ "1/U28" ], "groups" : [ "VB2B", "VB2A", "VB1B", "VB1A" ], "fresh" : true, "endTime" : new Date("2015-05-15T09:15:00Z"), "startTime" : new Date("2015-05-15T06:00:00Z"), "lectureName" : "Physik", "docents" : [ "Kahle" ] }),
+            new Lecture({ "_id" : mongoose.Types.ObjectId("343166666336336466303863"), "rooms" : [ "1/220", "1/U28" ], "groups" : [ "ST_TZ", "ST_VZ" ], "fresh" : true, "endTime" : new Date("2015-05-15T07:30:00Z"), "startTime" : new Date("2015-05-15T06:00:00Z"), "lectureName" : "Additional Elective Module - Computer Vision", "docents" : [ "Enzweiler" ] })
+        ];
+        lectures.forEach(function(l) {
+            l.save();
+        });
+
+        // start the api
         api.startApi();
     });
 
