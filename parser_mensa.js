@@ -19,12 +19,6 @@ var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
 mongoose.connect(mongoConnection);
 
 
-// simple hash-algo to generate 12 byte long objectId
-var hashCode = function(s){
-    var hash = crypto.createHash('md5').update(s).digest('hex').substring(0, 12);
-    return hash;
-};
-
 // parsing
 var parse = function(html, cb) {
     // create models from our schemas
