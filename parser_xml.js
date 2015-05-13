@@ -33,7 +33,7 @@ var startParser = function() {
 
     // drop current lecture collection to get a fresh result
     mongoose.connection.collections.lectures.drop(function(err) {
-        //if(err) { console.log(err); }
+        if(err) { console.log(err); }
 
         console.log("  * dropped old \""+ Lecture.collection.name + "\" collection...");
 
