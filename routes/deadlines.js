@@ -20,7 +20,7 @@ router.route("/")
         yesterday.setDate(yesterday.getDate() - 1);
 
         // all "active" deadlines
-        Deadline.find({"deadline": {"$gte": yesterday}}).sort({deadline: 1}).exec(function(err, deadlines) {
+        Deadline.find({"deadline": {"$gte": yesterday}}).sort({deadline: 1}).limit(25).exec(function(err, deadlines) {
             if (err) { res.status(500).send(err); }
             res.status(200).json(deadlines);
             res.end();

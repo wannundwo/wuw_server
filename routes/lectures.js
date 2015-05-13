@@ -17,7 +17,7 @@ router.route("/")
 
     // get all lectures (GET /$apiBaseUrl/lectures)
     .get(function(req, res) {
-        Lecture.find({}).sort({startTime: 1}).exec(function(err, lectures) {
+        Lecture.find({}).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
             if (err) { res.status(500).send(err); }
             res.status(200).json(lectures);
             res.end();
@@ -36,7 +36,7 @@ router.route("/upcoming")
         today.setHours(0,0,0,0);
 
         // show all lectures for current day and later
-        Lecture.find({"endTime": {"$gte": today}}).sort({startTime: 1}).exec(function(err, lectures) {
+        Lecture.find({"endTime": {"$gte": today}}).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
             if (err) { res.status(500).send(err); }
             res.status(200).json(lectures);
             res.end();
@@ -49,11 +49,11 @@ router.route("/groups")
 
     // get lectures for specific groups (POST /$apiBaseUrl/lectures/groups)
     .post(function(req, res) {
-        
+
         // today at 0:00
         var today = new Date();
         today.setHours(0,0,0,0);
-        
+
         var reqGroups = JSON.parse(req.body.groups || "[]");
         var query = { groups: { $in: reqGroups }, "endTime": {"$gte": today}};
 
@@ -64,7 +64,7 @@ router.route("/groups")
 
         // check if we got a proper array
         if (reqGroups) {
-            Lecture.find(query).sort({startTime: 1}).exec(function(err, lectures) {
+            Lecture.find(query).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
                 if (err) { res.status(500).send(err + " - data was: " + reqGroups);  }
                 res.status(200).json(lectures);
                 res.end();
@@ -74,13 +74,14 @@ router.route("/groups")
             return;
         }
     });
-    
+
+
 // on routes that end in /lectures/weekly
 router.route("/weekly")
 
     // get lectures for specific groups (POST /$apiBaseUrl/lectures/groups)
     .post(function(req, res) {
-        
+
         var mon = moment().day(1);
         mon.hour(0);
         mon.minute(0);
@@ -89,7 +90,7 @@ router.route("/weekly")
         sun.hour(23);
         sun.minute(59);
         sun.seconds(59);
-        
+
         var reqGroups = JSON.parse(req.body.groups || "[]");
         var query = { groups: { $in: reqGroups }, "startTime": {"$gte": mon}, "endTime": {"$lte": sun}};
 
@@ -100,7 +101,7 @@ router.route("/weekly")
 
         // check if we got a proper array
         if (reqGroups) {
-            Lecture.find(query).sort({startTime: 1}).exec(function(err, lectures) {
+            Lecture.find(query).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
                 if (err) { res.status(500).send(err + " - data was: " + reqGroups);  }
                 res.status(200).json(lectures);
                 res.end();
