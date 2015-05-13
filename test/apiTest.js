@@ -5,7 +5,6 @@ var fs = require('fs');
 var request = require('request');
 var mongoose = require("mongoose");
 var api = require('../api');
-var parser = require('../parser_lsf');
 
 
 // urls
