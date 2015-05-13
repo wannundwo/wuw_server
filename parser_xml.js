@@ -5,11 +5,13 @@ var mongoose = require("mongoose");
 var async = require("async");
 var crypto = require("crypto");
 var parseString = require('xml2js').parseString;
+var utils = require("./utils");
 
 
 // data source
 //var url = "http://php.rz.hft-stuttgart.de/hftapp/raumbelegunghftapp.php";
 var url = "http://localhost:8000/hft.xml";
+
 
 // mongodb
 var mongohost="localhost:27017";
@@ -17,14 +19,6 @@ var mongodb=process.env.WUWDB || "wuw";
 var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
 // connect
 mongoose.connect(mongoConnection);
-
-
-// simple hash-algo to generate 12 byte long objectId
-var hashCode = function(s){
-    var hash = crypto.createHash('md5').update(s).digest('hex').substring(0, 12);
-    return hash;
-};
-
 
 var startParser = function() {
     // connect to mongodb (if not already)
@@ -64,7 +58,7 @@ var startParser = function() {
                             Lec.startTime = new Date(lecture.start);
                             Lec.endTime = new Date(lecture.ende);
                             Lec.docents = lecture.personname;
-                            Lec.hashCode = hashCode(Lec.lectureName+Lec.startTime);
+                            Lec.hashCode = utils.hashCode(Lec.lectureName+Lec.startTime);
                             Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
 
                             //console.log(Lec);

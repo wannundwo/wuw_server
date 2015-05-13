@@ -3,6 +3,15 @@
 var Please = require("pleasejs");
 var crypto = require("crypto");
 
+
+// simple hash-algo to generate 12 byte long objectId
+var hashCode = function(s){
+    var hash = crypto.createHash('md5').update(s).digest('hex').substring(0, 12);
+    return hash;
+};
+
+
+// generate color from string
 var stringToColor = function(str) {
 
     if (typeof str === "undefined") {
@@ -16,4 +25,4 @@ var stringToColor = function(str) {
     return color;
 };
 
-module.exports = { stringToColor: stringToColor };
+module.exports = { hashCode: hashCode, stringToColor: stringToColor };

@@ -5,6 +5,7 @@ var cheerio = require("cheerio");
 var mongoose = require("mongoose");
 var async = require("async");
 var crypto = require("crypto");
+var utils = require("./utils");
 
 
 // how many days should we parse?
@@ -15,12 +16,6 @@ var daysToParse = 21;
 var mongohost="localhost:27017";
 var mongodb=process.env.WUWDB || "wuw";
 var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
-
-// simple hash-algo to generate 12 byte long objectId
-var hashCode = function(s){
-    var hash = crypto.createHash('md5').update(s).digest('hex').substring(0, 12);
-    return hash;
-};
 
 // parsing
 var parse = function(html, cb) {
@@ -58,7 +53,7 @@ var parse = function(html, cb) {
         Lec.startTime = new Date(intDate + " " + $(lectureLine).children().eq(0).text().trim());
         Lec.endTime = new Date(intDate + " " + $(lectureLine).children().eq(1).text().trim());
         Lec.docents = docents;
-        Lec.hashCode = hashCode(Lec.lectureName+curDate+Lec.startTime);
+        Lec.hashCode = utils.hashCode(Lec.lectureName+curDate+Lec.startTime);
         Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
         Lec.fresh = true;
 
