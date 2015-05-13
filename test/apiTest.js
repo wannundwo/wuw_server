@@ -53,6 +53,7 @@ describe('API', function(){
 
 
     describe('routes', function() {
+
         describe('lectures', function() {
 
             it('/lectures should return 200', function(done) {
@@ -114,7 +115,7 @@ describe('API', function(){
 
         describe('groups', function() {
 
-            it('/dishes should return 200', function(done) {
+            it('/groups should return 200', function(done) {
                 request(groupsBaseUrl, function(error, response, html) {
                     assert(!error, error);
                     assert.equal(response.statusCode, 200);
