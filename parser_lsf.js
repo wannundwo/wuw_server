@@ -15,9 +15,6 @@ var daysToParse = 21;
 var mongohost="localhost:27017";
 var mongodb=process.env.WUWDB || "wuw";
 var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
-// connect
-mongoose.connect(mongoConnection);
-
 
 // simple hash-algo to generate 12 byte long objectId
 var hashCode = function(s){
