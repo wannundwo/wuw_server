@@ -63,6 +63,7 @@ var parse = function(html, cb) {
         Lec.docents = docents;
         Lec.hashCode = hashCode(Lec.lectureName+curDate+Lec.startTime);
         Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
+        Lec.fresh = true;
 
         // create an object from our document
         var upsertData = Lec.toObject();
@@ -114,22 +115,28 @@ var startParser = function() {
     console.log("  * parsing " + daysToParse + " days");
     process.stdout.write("\n   ");
 
-    // parse every url (rate-limited, dont fuck the lsf)
-    async.eachLimit(urls, 5, function(url, cb) {
-        request(url, function(error, response, html) {
-            if(!error) {
-                // parse html with all lectures for choosen date
-                parse(html, function() {
-                    // simple progress display
-                    process.stdout.write(" *");
-                    cb();
-                });
-            }
+    // set "fresh" flag to false
+    Lecture.update({fresh:true}, {fresh:false}, { multi: true }, function (err, raw) {
+        if(err) { console.log(err); }
+
+        // parse every url (rate-limited, dont fuck the lsf)
+        async.eachLimit(urls, 5, function(url, cb) {
+            // fetch the data
+            request(url, function(error, response, html) {
+                if(!error) {
+                    // parse html with all lectures for choosen date
+                    parse(html, function() {
+                        // simple progress display
+                        process.stdout.write(" *");
+                        cb();
+                    });
+                }
+            });
+        }, function() {
+            // everything done
+            mongoose.disconnect();
+            console.log("\n\n  * done!\n");
         });
-    }, function() {
-        // everything done
-        mongoose.disconnect();
-        console.log("\n\n  * done!\n");
     });
 };
 
