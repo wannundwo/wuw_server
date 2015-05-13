@@ -10,8 +10,7 @@ var LectureSchema = new mongoose.Schema({
     groups: [String],
     startTime: Date,
     endTime: Date,
-    docents: [String],
-    fresh: Boolean
+    docents: [String]
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true }

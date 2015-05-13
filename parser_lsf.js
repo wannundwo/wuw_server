@@ -55,7 +55,6 @@ var parse = function(html, cb) {
         Lec.docents = docents;
         Lec.hashCode = utils.hashCode(Lec.lectureName+curDate+Lec.startTime);
         Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
-        Lec.fresh = true;
 
         // create an object from our document
         var upsertData = Lec.toObject();
@@ -107,8 +106,11 @@ var startParser = function() {
     console.log("  * parsing " + daysToParse + " days");
     process.stdout.write("\n   ");
 
-    // set "fresh" flag to false
-    Lecture.update({fresh:true}, {fresh:false}, { multi: true }, function (err, raw) {
+    var today = new Date();
+    console.log(today);
+
+    // remove upcoming lectures (and get fresh data)
+    Lecture.remove({ startTime: {"$gte": today} }, function (err) {
         if(err) { console.log(err); }
 
         // parse every url (rate-limited, dont fuck the lsf)
