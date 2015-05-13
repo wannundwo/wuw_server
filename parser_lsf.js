@@ -110,27 +110,26 @@ var startParser = function() {
     // create the urls to parse
     var urls = createUrls();
 
-    console.log("started parsing of " + daysToParse + " days (this inlcuded)...");
+    console.log("\n * lsf parser started\n");
+    console.log("  * parsing " + daysToParse + " days");
+    process.stdout.write("\n   ");
 
-    // drop current lecture collection to get a fresh result
-    mongoose.connection.collections.lectures.drop(function(err) {
-        if(err) { console.log(err); }
-
-        console.log("dropped old \""+ Lecture.collection.name + "\" collection, lets start clean...");
-
-        // parse every url (max. 5 parallel, dont fuck the lsf)
-        async.eachLimit(urls, 5, function(url, cb) {
-            request(url, function(error, response, html) {
-                if(!error) {
-                    // parse html with all lectures for choosen date
-                    parse(html, cb);
-                }
-            });
-        }, function() {
-            // everything done
-            mongoose.disconnect();
-            console.log("...done!");
+    // parse every url (rate-limited, dont fuck the lsf)
+    async.eachLimit(urls, 5, function(url, cb) {
+        request(url, function(error, response, html) {
+            if(!error) {
+                // parse html with all lectures for choosen date
+                parse(html, function() {
+                    // simple progress display
+                    process.stdout.write(" *");
+                    cb();
+                });
+            }
         });
+    }, function() {
+        // everything done
+        mongoose.disconnect();
+        console.log("\n\n  * done!\n");
     });
 };
 
