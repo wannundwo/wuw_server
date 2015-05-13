@@ -45,6 +45,7 @@ describe('API', function(){
 
     it('/ should return 200 & welcome message', function(done) {
         request(apiBaseUrl, function(error, response, json) {
+            assert(!error, error);
             assert.equal(response.statusCode, 200);
             assert.equal(json, '{"message":"welcome to the wuw api v0"}');
             done();
@@ -57,30 +58,35 @@ describe('API', function(){
 
             it('/lectures should return 200', function(done) {
                 request(lecturesBaseUrl, function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/lectures/upcoming should return 200', function(done) {
                 request(lecturesBaseUrl + "/upcoming", function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/lectures/groups should return 200', function(done) {
                 request.post(lecturesBaseUrl + "/groups", {groups:"IF3_4"}, function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/lectures/weekly should return 200', function(done) {
                 request.post(lecturesBaseUrl + "/weekly", {groups:"IF3_4"}, function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/lectures/:lecture_id should return 500', function(done) {
                 request(lecturesBaseUrl + "/133731337", function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 500);
                     done();
                 });
@@ -92,12 +98,14 @@ describe('API', function(){
 
             it('/deadlines should return 200', function(done) {
                 request(deadlinesBaseUrl, function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/deadlines/:deadline_id should return 500', function(done) {
                 request(deadlinesBaseUrl + "/133731337", function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 500);
                     done();
                 });
@@ -109,12 +117,14 @@ describe('API', function(){
 
             it('/dishes should return 200', function(done) {
                 request(groupsBaseUrl, function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/groups/lectures should return 200', function(done) {
                 request(groupsBaseUrl + "/lectures", function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
@@ -126,12 +136,14 @@ describe('API', function(){
 
             it('/dishes should return 200', function(done) {
                 request(dishesBaseUrl, function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/dishes/:dish_id should return 500', function(done) {
                 request(dishesBaseUrl + "/133731337", function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 500);
                     done();
                 });
@@ -143,12 +155,14 @@ describe('API', function(){
 
             it('/rooms should return 200', function(done) {
                 request(roomsBaseUrl, function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/rooms/free should return 200', function(done) {
                 request(roomsBaseUrl + "/free", function(error, response, html) {
+                    assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
@@ -173,6 +187,7 @@ describe('API', function(){
 
             // create a deadline
             request.post(conf, function(error, response, body) {
+                assert(!error, error);
                 assert.equal(response.statusCode, 200);
                 id = JSON.parse(body).id;
                 assert.notEqual(typeof id, 'undefined');
@@ -182,6 +197,7 @@ describe('API', function(){
         it('it should have the previously created deadline', function(done) {
             var url = deadlinesBaseUrl + '/' + id;
             request(url, function(error, response, html) {
+                assert(!error, error);
                 assert.equal(response.statusCode, 200);
                 var info = JSON.parse(html).info;
                 assert.equal(info, 'Do it!');
