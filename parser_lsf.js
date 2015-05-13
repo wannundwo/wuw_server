@@ -106,8 +106,8 @@ var startParser = function() {
     console.log("  * parsing " + daysToParse + " days");
     process.stdout.write("\n   ");
 
+    // get current datetime
     var today = new Date();
-    console.log(today);
 
     // remove upcoming lectures (and get fresh data)
     Lecture.remove({ startTime: {"$gte": today} }, function (err) {
