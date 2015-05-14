@@ -30,7 +30,6 @@ router.route("/")
     // create a deadline (POST /$apiBaseUrl/deadlines)
     .post(function(req, res) {
         // create instance of Deadline model
-        console.log(req.body);
         var deadline = new Deadline();
 
         // check inputs
