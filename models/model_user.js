@@ -6,8 +6,8 @@ var utils = require("../utils");
 // create mongodb schema for our users
 var UserSchema = new mongoose.Schema({
     deviceId: String,
-    plattform: String,
-    plattformVersion: String,
+    platform: String,
+    platformVersion: String,
     pushToken: String,
     firstSeen: Date,
     lastSeen: Date

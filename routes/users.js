@@ -19,8 +19,8 @@ router.route("/")
 
         // check inputs
         req.assert("deviceId", "deviceId must not be empty").notEmpty();
-        req.assert("plattform", "plattform must not be empty").notEmpty();
-        req.assert("plattformVersion", "plattformVersion must not be empty").notEmpty();
+        req.assert("platform", "platform must not be empty").notEmpty();
+        req.assert("platformVersion", "platformVersion must not be empty").notEmpty();
 
         // if there are errors, send 400
         var errors = req.validationErrors(true);
@@ -33,8 +33,8 @@ router.route("/")
 
         // set attributes
         user.deviceId = req.body.deviceId;
-        user.plattform = req.body.plattform;
-        user.plattformVersion = req.body.plattformVersion;
+        user.platform = req.body.platform;
+        user.platformVersion = req.body.platformVersion;
         user.pushToken = req.body.pushToken;
         user.lastSeen = now;
 
