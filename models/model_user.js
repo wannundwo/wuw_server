@@ -7,6 +7,7 @@ var utils = require("../utils");
 var UserSchema = new mongoose.Schema({
     deviceId: String,
     plattform: String,
+    plattformVersion: String,
     pushToken: String,
     firstSeen: Date,
     lastSeen: Date
