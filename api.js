@@ -41,18 +41,9 @@ var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
 // connect
 mongoose.connect(mongoConnection);
 
-
 // create models from our schemas
 var Lecture = require("./models/model_lecture");
 var Deadline = require("./models/model_deadline");
-
-// import our routes
-var apiLectures = require("./routes/lectures");
-var apiDeadlines = require("./routes/deadlines");
-var apiRooms = require("./routes/rooms");
-var apiGroups = require("./routes/groups");
-var apiDishes = require("./routes/dishes");
-
 
 // create the express app, router & configure port
 var app = express();
@@ -84,11 +75,12 @@ router.get("/", function(req, res) {
 });
 
 // register our routes & routers
-router.use("/lectures", apiLectures);
-router.use("/deadlines", apiDeadlines);
-router.use("/rooms", apiRooms);
-router.use("/groups", apiGroups);
-router.use("/dishes", apiDishes);
+router.use("/lectures", require("./routes/lectures"));
+router.use("/deadlines", require("./routes/deadlines"));
+router.use("/rooms", require("./routes/rooms"));
+router.use("/groups", require("./routes/groups"));
+router.use("/dishes", require("./routes/dishes"));
+router.use("/users", require("./routes/users"));
 // register base & default router
 app.use(apiBaseUrl, router);
 
