@@ -9,6 +9,7 @@ var UserSchema = new mongoose.Schema({
     platform: String,
     platformVersion: String,
     pushToken: String,
+    appVersion: String,
     firstSeen: Date,
     lastSeen: Date
 }, {

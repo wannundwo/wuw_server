@@ -21,6 +21,7 @@ router.route("/")
         req.assert("deviceId", "deviceId must not be empty").notEmpty();
         req.assert("platform", "platform must not be empty").notEmpty();
         req.assert("platformVersion", "platformVersion must not be empty").notEmpty();
+        req.assert("appVersion", "appVersion must not be empty").notEmpty();
 
         // if there are errors, send 400
         var errors = req.validationErrors(true);
@@ -36,6 +37,7 @@ router.route("/")
         user.platform = req.body.platform;
         user.platformVersion = req.body.platformVersion;
         user.pushToken = req.body.pushToken;
+        user.appVersion = req.body.appVersion;
         user.lastSeen = now;
 
         // create an object from our document
