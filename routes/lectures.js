@@ -26,21 +26,35 @@ router.route("/")
 
 
 // on routes that end in /lectures/upcoming
+// this returns all lectures since monday of the current week
 router.route("/upcoming")
 
     // get upcoming lectures (GET /$apiBaseUrl/lectures/upcoming)
-    .get(function(req, res) {
+    .post(function(req, res) {
+        var mon = moment().day(1);
+        mon.hour(0);
+        mon.minute(0);
+        mon.seconds(0);
 
-        // today at 0:00
-        var today = new Date();
-        today.setHours(0,0,0,0);
+        var reqGroups = JSON.parse(req.body.groups || "[]");
+        var query = { groups: { $in: reqGroups }, "startTime": {"$gte": mon}};
 
-        // show all lectures for current day and later
-        Lecture.find({"endTime": {"$gte": today}}).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
-            if (err) { res.status(500).send(err); }
-            res.status(200).json(lectures);
-            res.end();
-        });
+        // if no reqGroups provided, return all lectures
+        if (reqGroups.length === 0) {
+            delete query.groups;
+        }
+
+        // check if we got a proper array
+        if (reqGroups) {
+            Lecture.find(query).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
+                if (err) { res.status(500).send(err + " - data was: " + reqGroups);  }
+                res.status(200).json(lectures);
+                res.end();
+            });
+        } else {
+            res.status(400).json({ error: "ohh that query looks wrong to me: " + reqGroups });
+            return;
+        }
     });
 
 
