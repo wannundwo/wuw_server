@@ -58,7 +58,7 @@ router.route("/")
     router.route("/:deviceId/lectures")
 
         // get lecture with that id (GET /$apiBaseUrl/lectures/:lecture_id)
-        .get(function(req, res) {
+        .post(function(req, res) {
             User.findById(req.params.deviceId, function(err, user) {
                 if (err) { res.status(500).send(err); }
 
