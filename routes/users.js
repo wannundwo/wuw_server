@@ -54,20 +54,31 @@ router.route("/")
         });
     });
 
+
     // on routes that end in /users/:userDevId/lectures
     router.route("/:deviceId/lectures")
 
-        // get lecture with that id (GET /$apiBaseUrl/lectures/:lecture_id)
+        // post selectedLectures for server-side storing (GET /$apiBaseUrl/users/:ldeviceId/lectures)
         .post(function(req, res) {
             var deviceId = req.params.deviceId;
-            User.findById(deviceId, function(err, user) {
-                if (err) { res.status(500).send(err); res.end(); }
-
-                // update users selectedLectures
-                User.update({ deviceId: deviceId }, { selectedLectures: req.params.selectedLectures }, function(err, user) {
-                    if (err) { res.send(err); res.end(); }
-                    res.status(200).json({ message: "successful!", id: user._id });
-                });
+            User.find({deviceId: deviceId}, function(err, user) {
+                console.log(user);
+                if (err) {
+                    //res.status(500).send(err);
+                    res.status(500).send({ message: "error!" });
+                    res.end();
+                } else {
+                    // update users selectedLectures
+                    User.update({ deviceId: deviceId }, { selectedLectures: req.params.selectedLectures }, function(err, user) {
+                        if (err) {
+                            //res.status(500).send(err);
+                            res.status(500).send({ message: "error!" });
+                        } else {
+                            res.status(200).json({ message: "successful!", id: user._id });
+                        }
+                        res.end();
+                    });
+                }
             });
         });
 
