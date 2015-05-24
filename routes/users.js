@@ -59,11 +59,12 @@ router.route("/")
 
         // get lecture with that id (GET /$apiBaseUrl/lectures/:lecture_id)
         .post(function(req, res) {
-            User.findById(req.params.deviceId, function(err, user) {
+            var deviceId = req.params.deviceId;
+            User.findById(deviceId, function(err, user) {
                 if (err) { res.status(500).send(err); }
 
                 // update users selectedLectures
-                User.update({ deviceId: user.deviceId }, { selectedLectures: req.params.selectedLectures }, function(err, user) {
+                User.update({ deviceId: deviceId }, { selectedLectures: req.params.selectedLectures }, function(err, user) {
                     if (err) { res.send(err); }
                     res.status(200).json({ message: "successful!", id: user._id });
                 });
