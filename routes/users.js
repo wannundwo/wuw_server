@@ -61,15 +61,18 @@ router.route("/")
         // post selectedLectures for server-side storing (GET /$apiBaseUrl/users/:ldeviceId/lectures)
         .post(function(req, res) {
             var deviceId = req.params.deviceId;
+            var selectedLectures = req.body.selectedLectures;
+
             User.find({deviceId: deviceId}, function(err, user) {
-                console.log(user);
+
                 if (err) {
                     //res.status(500).send(err);
                     res.status(500).send({ message: "error!" });
                     res.end();
                 } else {
+                    console.log(selectedLectures);
                     // update users selectedLectures
-                    User.update({ deviceId: deviceId }, { selectedLectures: req.params.selectedLectures }, function(err, user) {
+                    User.update({ deviceId: deviceId }, { $set: { selectedLectures: selectedLectures } }, function(err, user) {
                         if (err) {
                             //res.status(500).send(err);
                             res.status(500).send({ message: "error!" });

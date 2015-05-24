@@ -3,10 +3,17 @@
 var mongoose = require("mongoose");
 var utils = require("../utils");
 
+var selectedLecturesSchema = new mongoose.Schema({
+    groupName: String,
+    lectureName: String
+}, {
+    _id: false
+});
+
 // create mongodb schema for our users
 var UserSchema = new mongoose.Schema({
     deviceId: String,
-    selectedLectures: [{ groupName: String, lectureName: String }],
+    selectedLectures: [selectedLecturesSchema],
     platform: String,
     platformVersion: String,
     pushToken: String,
