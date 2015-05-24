@@ -61,11 +61,11 @@ router.route("/")
         .post(function(req, res) {
             var deviceId = req.params.deviceId;
             User.findById(deviceId, function(err, user) {
-                if (err) { res.status(500).send(err); }
+                if (err) { res.status(500).send(err); res.end(); }
 
                 // update users selectedLectures
                 User.update({ deviceId: deviceId }, { selectedLectures: req.params.selectedLectures }, function(err, user) {
-                    if (err) { res.send(err); }
+                    if (err) { res.send(err); res.end(); }
                     res.status(200).json({ message: "successful!", id: user._id });
                 });
             });
