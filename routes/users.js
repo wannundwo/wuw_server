@@ -44,14 +44,30 @@ router.route("/")
         var upsertData = user.toObject();
         // delete attributes to upsert
         delete upsertData._id;
-        delete upsertData.firstSeen
+        delete upsertData.firstSeen;
 
         // upsert in db
         User.update({ deviceId: user.deviceId }, { $setOnInsert: { firstSeen: now }, $set: upsertData }, { upsert: true }, function(err, user) {
             if (err) { res.send(err); }
             res.status(200).json({ message: "successful!", id: user._id });
+            res.end();
         });
     });
 
+    // on routes that end in /users/:userDevId/lectures
+    router.route("/:deviceId/lectures")
+
+        // get lecture with that id (GET /$apiBaseUrl/lectures/:lecture_id)
+        .get(function(req, res) {
+            User.findById(req.params.deviceId, function(err, user) {
+                if (err) { res.status(500).send(err); }
+
+                // update users selectedLectures
+                User.update({ deviceId: user.deviceId }, { selectedLectures: req.params.selectedLectures }, function(err, user) {
+                    if (err) { res.send(err); }
+                    res.status(200).json({ message: "successful!", id: user._id });
+                });
+            });
+        });
 
 module.exports = router;

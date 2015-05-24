@@ -6,6 +6,7 @@ var utils = require("../utils");
 // create mongodb schema for our users
 var UserSchema = new mongoose.Schema({
     deviceId: String,
+    selectedLectures: [{ groupName: String, lectureName: String }],
     platform: String,
     platformVersion: String,
     pushToken: String,
