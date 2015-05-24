@@ -70,7 +70,6 @@ router.route("/")
                     res.status(500).send({ message: "error!" });
                     res.end();
                 } else {
-                    console.log(selectedLectures);
                     // update users selectedLectures
                     User.update({ deviceId: deviceId }, { $set: { selectedLectures: selectedLectures } }, function(err, user) {
                         if (err) {
