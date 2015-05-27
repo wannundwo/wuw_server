@@ -20,9 +20,9 @@ router.route("/user/:user_id")
         // get the users selected lectures
         User.findOne({'deviceId': req.params.user_id}, function(err, user) {
             if (err) { res.status(500).send(err); }
-            var selectedLectures = user.selectedLectures.toObject();
-            console.log(selectedLectures);
+            if (user === null) { res.status(500).send("deviceId not found"); return;}
             
+            var selectedLectures = user.selectedLectures.toObject();
             var query = {group: {$in: selectedLectures}, "deadline": {"$gte": yesterday}};
             Deadline.find(query).exec(function(err, deadlines) {
                 if (err) { res.status(500).send(err); }
