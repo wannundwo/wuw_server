@@ -8,7 +8,10 @@ var DeadlineSchema = new mongoose.Schema({
     info: String,
     deadline: Date, // this is the "Abgabetermin" <- lol! :D
     shortLectureName: String,
-    group: String,
+    group: {
+        groupName: String,
+        lectureName: String
+    },
     createdBy: String
 }, {
     toObject: { virtuals: true },

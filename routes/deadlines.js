@@ -7,6 +7,30 @@ var router = require("express").Router();
 
 // create model
 var Deadline = require("../models/model_deadline");
+var User = require("../models/model_user");
+
+// on routes that end in /deadlines/user/:user_id
+router.route("/user/:user_id")
+    .get(function(req, res) {
+
+        // get date of yesterday
+        var yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        // get the users selected lectures
+        User.findOne({'deviceId': req.params.user_id}, function(err, user) {
+            if (err) { res.status(500).send(err); }
+            var selectedLectures = user.selectedLectures.toObject();
+            console.log(selectedLectures);
+            
+            var query = {group: {$in: selectedLectures}, "deadline": {"$gte": yesterday}};
+            Deadline.find(query).exec(function(err, deadlines) {
+                if (err) { res.status(500).send(err); }
+                res.status(200).json(deadlines);
+                res.end();
+            });
+        });
+    });
 
 
 // on routes that end in /deadlines
@@ -51,7 +75,8 @@ router.route("/")
         deadline.deadline = req.body.deadline;
         deadline.info = req.body.info;
         deadline.shortLectureName = req.body.shortLectureName;
-        deadline.group = req.body.group;
+        deadline.group.groupName = req.body.group.groupName;
+        deadline.group.lectureName = req.body.group.lectureName;
         deadline.createdBy = req.body.uuid;
 
         // save deadline in mongodb
