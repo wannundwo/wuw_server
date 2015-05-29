@@ -18,7 +18,7 @@ router.route("/")
         today.setHours(0,0,0,0);
 
         // show all dishes for current day and later
-        Dish.find({"date": {"$gte": today}}).sort({date: 1, priceInternal: 1}).exec(function(err, dishes) {
+        Dish.find({"date": {"$gte": today}}).sort({date: 1, priceInternal: 1}).limit(60).exec(function(err, dishes) {
             if (err) { res.status(500).send(err); }
             res.status(200).json(dishes);
             res.end();
