@@ -25,36 +25,36 @@ router.route("/")
         });
     });
 
-// on routes that end in /lectures/user/:user_id
-router.route("/user/:user_id")
+// on routes that end in /lectures/users/:user_id
+router.route("/users/:user_id")
 
     // get all lectures (GET /$apiBaseUrl/lectures)
     .get(function(req, res) {
-        
+
         // get monday of the current week
         var mon = moment().day(1);
         mon.hour(0);
         mon.minute(0);
         mon.seconds(0);
-        
+
         // get the users selected lectures
         User.findOne({'deviceId': req.params.user_id}, function(err, user) {
             if (err) { res.status(500).send(err); }
             if (user === null) { res.status(500).send("deviceId not found"); return;}
-            
+
             var selectedLectures = user.selectedLectures.toObject();
             var selectedGroupsArr = [];
             var selectedLecturesArr = [];
-            
+
             for (var i = 0; i < selectedLectures.length; i++) {
                 selectedGroupsArr.push(selectedLectures[i].groupName);
                 selectedLecturesArr.push(selectedLectures[i].lectureName);
             }
-            
-            var query = {groups: {$in: selectedGroupsArr}, 
-                         lectureName: {$in: selectedLecturesArr}, 
+
+            var query = {groups: {$in: selectedGroupsArr},
+                         lectureName: {$in: selectedLecturesArr},
                          startTime: {"$gte": mon}};
-                         
+
             Lecture.find(query).exec(function(err, lectures) {
                 if (err) { res.status(500).send(err); }
                 res.status(200).json(lectures);
