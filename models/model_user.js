@@ -1,7 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose');
-var utils = require('../utils');
+var utils = require('../wuw_utils');
 
 var selectedLecturesSchema = new mongoose.Schema({
     groupName: String,

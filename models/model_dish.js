@@ -1,7 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose');
-var utils = require('../utils');
+var utils = require('../wuw_utils');
 
 // mensa constants, should be outsourced to mongo virtuals
 var mensaCategories = ['Vorspeise', 'Das Komplettpaket', 'Die solide Basis', 'Bio pur', 'Das grüne Glück', 'Der Renner', 'Beilagen', 'Nachtisch'];

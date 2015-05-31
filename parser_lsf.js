@@ -5,7 +5,7 @@ var cheerio = require('cheerio');
 var mongoose = require('mongoose');
 var async = require('async');
 var crypto = require('crypto');
-var utils = require('./utils');
+var utils = require('./wuw_utils');
 var path = require('path');
 
 // how many days should we parse?

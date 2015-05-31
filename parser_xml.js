@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var async = require('async');
 var crypto = require('crypto');
 var parseString = require('xml2js').parseString;
-var utils = require('./utils');
+var utils = require('./wuw_utils');
 
 
 // data source

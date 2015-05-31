@@ -1,7 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose');
-var utils = require('../utils');
+var utils = require('../wuw_utils');
 
 // create mongodb schema for our lectures
 var LectureSchema = new mongoose.Schema({
