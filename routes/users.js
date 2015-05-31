@@ -45,6 +45,7 @@ router.route("/")
         // delete attributes to upsert
         delete upsertData._id;
         delete upsertData.firstSeen;
+        delete upsertData.selectedLectures;
 
         // upsert in db
         User.update({ deviceId: user.deviceId }, { $setOnInsert: { firstSeen: now }, $set: upsertData }, { upsert: true }, function(err, user) {
