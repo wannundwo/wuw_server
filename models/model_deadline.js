@@ -19,7 +19,7 @@ var DeadlineSchema = new mongoose.Schema({
 });
 
 DeadlineSchema.virtual("color").get(function () {
-    return utils.stringToColor(this.group);
+    return utils.stringToColor(this.group.lectureName);
 });
 
 // create model from our schema & export it
