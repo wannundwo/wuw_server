@@ -85,6 +85,28 @@ router.use("/users", require("./routes/users"));
 app.use(apiBaseUrl, router);
 
 
+// catch-all route to handle 404 errors
+app.get('*', function(req, res, next) {
+    var err = new Error();
+    err.status = 404;
+    next(err);
+});
+
+// handle 404 error
+app.use(function(err, req, res, next) {
+    // if its not a 404, pass to next handler
+    if(err.status !== 404) { return next(err); }
+    // send 404
+    res.status(404).send({ msg: 'whoopsie!' });
+});
+
+// handle other errors
+app.use(function(err, req, res, next) {
+    console.error(err);
+    res.status(500).send({ msg: 'big whoopsie!' });
+});
+
+
 // start the server
 console.log("\n* starting the wuw api\n");
 console.log("  mongodb:  " + mongoConnection);
