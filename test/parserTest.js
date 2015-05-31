@@ -1,4 +1,4 @@
-// "use strict";
+// 'use strict';
 //
 // var assert = require('assert');
 // var parser = require('../parser_lsf');
@@ -25,7 +25,7 @@
 //                 if (err) { return console.log(err); }
 //                 var lectures = parser.parse(html);
 //                 var or = lectures[3];
-//                 assert.equal(or.lsfRoom, "BAU 1 - 1/206");
+//                 assert.equal(or.lsfRoom, 'BAU 1 - 1/206');
 //                 done();
 //             });
 //         });
@@ -44,7 +44,7 @@
 //                 if (err) { return console.log(err); }
 //                 var lectures = parser.parse(html);
 //                 var gdi = lectures[11];
-//                 assert.equal("15:45-17:15(1)", gdi.lsfTime);
+//                 assert.equal('15:45-17:15(1)', gdi.lsfTime);
 //                 done();
 //             });
 //         });

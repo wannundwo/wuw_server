@@ -1,19 +1,19 @@
-"use strict";
+'use strict';
 
 var assert = require('assert');
 var fs = require('fs');
 var request = require('request');
-var mongoose = require("mongoose");
+var mongoose = require('mongoose');
 var api = require('../api');
 
 
 // urls
-var apiBaseUrl = "http://localhost:4342/api/v0/";
-var lecturesBaseUrl = apiBaseUrl + "lectures";
-var deadlinesBaseUrl = apiBaseUrl + "deadlines";
-var groupsBaseUrl = apiBaseUrl + "groups";
-var dishesBaseUrl = apiBaseUrl + "dishes";
-var roomsBaseUrl = apiBaseUrl + "rooms";
+var apiBaseUrl = 'http://localhost:4342/api/v0/';
+var lecturesBaseUrl = apiBaseUrl + 'lectures';
+var deadlinesBaseUrl = apiBaseUrl + 'deadlines';
+var groupsBaseUrl = apiBaseUrl + 'groups';
+var dishesBaseUrl = apiBaseUrl + 'dishes';
+var roomsBaseUrl = apiBaseUrl + 'rooms';
 
 
 describe('API', function(){
@@ -21,14 +21,14 @@ describe('API', function(){
     before(function () {
 
         // add some test data
-        var mongohost="localhost:27017";
-        var mongodb=process.env.WUWDB || "wuw";
-        var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
+        var mongohost='localhost:27017';
+        var mongodb=process.env.WUWDB || 'wuw';
+        var mongoConnection='mongodb://' + mongohost + '/' + mongodb;
         if(mongoose.connection.readyState === 0) { mongoose.connect(mongoConnection); }
-        var Lecture = require("../models/model_lecture");
+        var Lecture = require('../models/model_lecture');
         var lectures = [
-            new Lecture({ "_id" : mongoose.Types.ObjectId("336665343663383066643430"), "rooms" : [ "1/U28" ], "groups" : [ "VB2B", "VB2A", "VB1B", "VB1A" ], "fresh" : true, "endTime" : new Date("2015-05-15T09:15:00Z"), "startTime" : new Date("2015-05-15T06:00:00Z"), "lectureName" : "Physik", "docents" : [ "Kahle" ] }),
-            new Lecture({ "_id" : mongoose.Types.ObjectId("343166666336336466303863"), "rooms" : [ "1/220", "1/U28" ], "groups" : [ "ST_TZ", "ST_VZ" ], "fresh" : true, "endTime" : new Date("2015-05-15T07:30:00Z"), "startTime" : new Date("2015-05-15T06:00:00Z"), "lectureName" : "Additional Elective Module - Computer Vision", "docents" : [ "Enzweiler" ] })
+            new Lecture({ '_id' : mongoose.Types.ObjectId('336665343663383066643430'), 'rooms' : [ '1/U28' ], 'groups' : [ 'VB2B', 'VB2A', 'VB1B', 'VB1A' ], 'fresh' : true, 'endTime' : new Date('2015-05-15T09:15:00Z'), 'startTime' : new Date('2015-05-15T06:00:00Z'), 'lectureName' : 'Physik', 'docents' : [ 'Kahle' ] }),
+            new Lecture({ '_id' : mongoose.Types.ObjectId('343166666336336466303863'), 'rooms' : [ '1/220', '1/U28' ], 'groups' : [ 'ST_TZ', 'ST_VZ' ], 'fresh' : true, 'endTime' : new Date('2015-05-15T07:30:00Z'), 'startTime' : new Date('2015-05-15T06:00:00Z'), 'lectureName' : 'Additional Elective Module - Computer Vision', 'docents' : [ 'Enzweiler' ] })
         ];
         lectures.forEach(function(l) {
             l.save();
@@ -64,28 +64,28 @@ describe('API', function(){
                 });
             });
             it('/lectures/upcoming should return 200', function(done) {
-                request(lecturesBaseUrl + "/upcoming", function(error, response, html) {
+                request(lecturesBaseUrl + '/upcoming', function(error, response, html) {
                     assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/lectures/groups should return 200', function(done) {
-                request.post(lecturesBaseUrl + "/groups", {groups:"IF3_4"}, function(error, response, html) {
+                request.post(lecturesBaseUrl + '/groups', {groups:'IF3_4'}, function(error, response, html) {
                     assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/lectures/weekly should return 200', function(done) {
-                request.post(lecturesBaseUrl + "/weekly", {groups:"IF3_4"}, function(error, response, html) {
+                request.post(lecturesBaseUrl + '/weekly', {groups:'IF3_4'}, function(error, response, html) {
                     assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
                 });
             });
             it('/lectures/:lecture_id should return 500', function(done) {
-                request(lecturesBaseUrl + "/133731337", function(error, response, html) {
+                request(lecturesBaseUrl + '/133731337', function(error, response, html) {
                     assert(!error, error);
                     assert.equal(response.statusCode, 500);
                     done();
@@ -104,7 +104,7 @@ describe('API', function(){
                 });
             });
             it('/deadlines/:deadline_id should return 500', function(done) {
-                request(deadlinesBaseUrl + "/133731337", function(error, response, html) {
+                request(deadlinesBaseUrl + '/133731337', function(error, response, html) {
                     assert(!error, error);
                     assert.equal(response.statusCode, 500);
                     done();
@@ -123,7 +123,7 @@ describe('API', function(){
                 });
             });
             it('/groups/lectures should return 200', function(done) {
-                request(groupsBaseUrl + "/lectures", function(error, response, html) {
+                request(groupsBaseUrl + '/lectures', function(error, response, html) {
                     assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
@@ -142,7 +142,7 @@ describe('API', function(){
                 });
             });
             it('/dishes/:dish_id should return 500', function(done) {
-                request(dishesBaseUrl + "/133731337", function(error, response, html) {
+                request(dishesBaseUrl + '/133731337', function(error, response, html) {
                     assert(!error, error);
                     assert.equal(response.statusCode, 500);
                     done();
@@ -161,7 +161,7 @@ describe('API', function(){
                 });
             });
             it('/rooms/free should return 200', function(done) {
-                request(roomsBaseUrl + "/free", function(error, response, html) {
+                request(roomsBaseUrl + '/free', function(error, response, html) {
                     assert(!error, error);
                     assert.equal(response.statusCode, 200);
                     done();
@@ -172,7 +172,7 @@ describe('API', function(){
 
     describe('deadlines', function() {
 
-        var id = "";
+        var id = '';
 
         it('it should create deadline', function(done) {
             var deadline = {

@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-var Please = require("pleasejs");
-var crypto = require("crypto");
+var Please = require('pleasejs');
+var crypto = require('crypto');
 
 
 // simple hash-algo to generate 12 byte long objectId
@@ -14,8 +14,8 @@ var hashCode = function(s){
 // generate color from string
 var stringToColor = function(str) {
 
-    if (typeof str === "undefined") {
-        return "#444444";
+    if (typeof str === 'undefined') {
+        return '#444444';
     }
 
     var color = Please.make_color({

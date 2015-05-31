@@ -1,16 +1,16 @@
-"use strict";
+'use strict';
 
-var util = require("util");
+var util = require('util');
 
 // import the express router
-var router = require("express").Router();
+var router = require('express').Router();
 
 // create model
-var Deadline = require("../models/model_deadline");
-var User = require("../models/model_user");
+var Deadline = require('../models/model_deadline');
+var User = require('../models/model_user');
 
 // on routes that end in /deadlines/user/:user_id
-router.route("/user/:user_id")
+router.route('/user/:user_id')
     .get(function(req, res) {
 
         // get date of yesterday
@@ -20,10 +20,10 @@ router.route("/user/:user_id")
         // get the users selected lectures
         User.findOne({'deviceId': req.params.user_id}, function(err, user) {
             if (err) { res.status(500).send(err); }
-            if (user === null) { res.status(500).send("deviceId not found"); return;}
-            
+            if (user === null) { res.status(500).send('deviceId not found'); return;}
+
             var selectedLectures = user.selectedLectures.toObject();
-            var query = {group: {$in: selectedLectures}, "deadline": {"$gte": yesterday}};
+            var query = {group: {$in: selectedLectures}, 'deadline': {'$gte': yesterday}};
             Deadline.find(query).exec(function(err, deadlines) {
                 if (err) { res.status(500).send(err); }
                 res.status(200).json(deadlines);
@@ -34,7 +34,7 @@ router.route("/user/:user_id")
 
 
 // on routes that end in /deadlines
-router.route("/")
+router.route('/')
 
     // get all deadlines (GET /$apiBaseUrl/deadlines)
     .get(function(req, res) {
@@ -43,8 +43,8 @@ router.route("/")
         var yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
 
-        // all "active" deadlines
-        Deadline.find({"deadline": {"$gte": yesterday}}).sort({deadline: 1}).limit(25).exec(function(err, deadlines) {
+        // all 'active' deadlines
+        Deadline.find({'deadline': {'$gte': yesterday}}).sort({deadline: 1}).limit(25).exec(function(err, deadlines) {
             if (err) { res.status(500).send(err); }
             res.status(200).json(deadlines);
             res.end();
@@ -57,17 +57,17 @@ router.route("/")
         var deadline = new Deadline();
 
         // check inputs
-        req.assert("deadline", "deadline must be a valid date").isDate();
-        req.assert("deadline", "deadline must not be empty").notEmpty();
-        req.assert("info", "info must not be empty").notEmpty();
-        //req.assert("lectureName", "lectureName must not be empty").notEmpty();
-        //req.assert("group", "group must not be empty").notEmpty();
-        //req.assert("uuid", "oh kiddie...").notEmpty();
+        req.assert('deadline', 'deadline must be a valid date').isDate();
+        req.assert('deadline', 'deadline must not be empty').notEmpty();
+        req.assert('info', 'info must not be empty').notEmpty();
+        //req.assert('lectureName', 'lectureName must not be empty').notEmpty();
+        //req.assert('group', 'group must not be empty').notEmpty();
+        //req.assert('uuid', 'oh kiddie...').notEmpty();
 
         // if there are errors, send 400
         var errors = req.validationErrors(true);
         if (errors) {
-            res.status(400).send("There have been validation errors: " + util.inspect(errors));
+            res.status(400).send('There have been validation errors: ' + util.inspect(errors));
             return;
         }
 
@@ -82,12 +82,12 @@ router.route("/")
         // save deadline in mongodb
         deadline.save(function(err, deadline) {
             if (err) { res.send(err); }
-            res.status(200).json({ message: "Deadline created!", id: deadline.id });
+            res.status(200).json({ message: 'Deadline created!', id: deadline.id });
         });
     });
 
 // on routes that end in /deadlines/:deadline_id
-router.route("/:deadline_id")
+router.route('/:deadline_id')
 
     // get deadline with that id (GET /$apiBaseUrl/deadlines/:deadline_id)
     .get(function(req, res) {
@@ -110,7 +110,7 @@ router.route("/:deadline_id")
 
             deadline.save(function(err) {
                 if (err) { res.send(err); }
-                res.status(200).json({ message: "Deadline updated!" });
+                res.status(200).json({ message: 'Deadline updated!' });
             });
 
         });
@@ -122,7 +122,7 @@ router.route("/:deadline_id")
             _id: req.params.deadline_id
         }, function(err) {
             if (err) { res.status(500).send(err); }
-            res.status(200).json({ message: "Deadline successfully deleted" });
+            res.status(200).json({ message: 'Deadline successfully deleted' });
         });
     });
 

@@ -1,22 +1,22 @@
-"use strict";
+'use strict';
 
-var request = require("request");
-var mongoose = require("mongoose");
-var async = require("async");
-var crypto = require("crypto");
+var request = require('request');
+var mongoose = require('mongoose');
+var async = require('async');
+var crypto = require('crypto');
 var parseString = require('xml2js').parseString;
-var utils = require("./utils");
+var utils = require('./utils');
 
 
 // data source
-//var url = "http://php.rz.hft-stuttgart.de/hftapp/raumbelegunghftapp.php";
-var url = "http://localhost:8000/hft.xml";
+//var url = 'http://php.rz.hft-stuttgart.de/hftapp/raumbelegunghftapp.php';
+var url = 'http://localhost:8000/hft.xml';
 
 
 // mongodb
-var mongohost="localhost:27017";
-var mongodb=process.env.WUWDB || "wuw";
-var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
+var mongohost='localhost:27017';
+var mongodb=process.env.WUWDB || 'wuw';
+var mongoConnection='mongodb://' + mongohost + '/' + mongodb;
 // connect
 mongoose.connect(mongoConnection);
 
@@ -27,27 +27,27 @@ var startParser = function() {
     }
 
     // create model from our schema (needed for drop)
-    var Lecture = require("./models/model_lecture");
+    var Lecture = require('./models/model_lecture');
 
-    console.log("\n * lsf parser started\n");
+    console.log('\n * lsf parser started\n');
 
     // drop current lecture collection to get a fresh result
     mongoose.connection.collections.lectures.drop(function(err) {
         if(err) { console.log(err); }
 
-        console.log("  * dropped old \""+ Lecture.collection.name + "\" collection...");
+        console.log('  * dropped old \''+ Lecture.collection.name + '\' collection...');
 
         request(url, function(err, response, xml) {
             if(err) { console.log(err); }
             else {
-                console.log("  * got XML data");
+                console.log('  * got XML data');
 
                 // parse xml
                 parseString(xml, function (err, result) {
                     if(err) { console.log(err); }
                     else {
-                        console.log("  * parsed data to json");
-                        console.log("  * starting import");
+                        console.log('  * parsed data to json');
+                        console.log('  * starting import');
 
                         async.eachLimit(result.Raumbelegungen.dbrow, 5, function(lecture, cb) {
 
@@ -72,14 +72,14 @@ var startParser = function() {
                             var room = lecture.raum[0];
                             var group = lecture.semesterverband[0];
 
-                            console.log(lecture.raum + " -> " + room);
-                            console.log(lecture.semesterverband + " -> " + group);
+                            console.log(lecture.raum + ' -> ' + room);
+                            console.log(lecture.semesterverband + ' -> ' + group);
                             console.log();
 
                             //Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, cb);
 
                             // lectures without a group/room are useless...
-                            if(group !== "" && room !== "") {
+                            if(group !== '' && room !== '') {
                                 // save lecture to db & call callback
                                 Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, cb);
                             } else {

@@ -1,20 +1,20 @@
-"use strict";
+'use strict';
 
 // old /upcomingLectures is now /lectures/upcoming !!!
 // old /lecturesForGroups is now /lectures/groups !!!
 
 // import the express router
-var router = require("express").Router();
+var router = require('express').Router();
 
-var moment = require("moment");
+var moment = require('moment');
 
 // create model
-var Lecture = require("../models/model_lecture");
-var User = require("../models/model_user");
+var Lecture = require('../models/model_lecture');
+var User = require('../models/model_user');
 
 
 // on routes that end in /lectures
-router.route("/")
+router.route('/')
 
     // get all lectures (GET /$apiBaseUrl/lectures)
     .get(function(req, res) {
@@ -26,7 +26,7 @@ router.route("/")
     });
 
 // on routes that end in /lectures/users/:user_id
-router.route("/users/:user_id")
+router.route('/users/:user_id')
 
     // get all lectures (GET /$apiBaseUrl/lectures)
     .get(function(req, res) {
@@ -40,7 +40,7 @@ router.route("/users/:user_id")
         // get the users selected lectures
         User.findOne({'deviceId': req.params.user_id}, function(err, user) {
             if (err) { res.status(500).send(err); }
-            if (user === null) { res.status(500).send("deviceId not found"); return;}
+            if (user === null) { res.status(500).send('deviceId not found'); return;}
 
             var selectedLectures = user.selectedLectures.toObject();
             var selectedGroupsArr = [];
@@ -53,7 +53,7 @@ router.route("/users/:user_id")
 
             var query = {groups: {$in: selectedGroupsArr},
                          lectureName: {$in: selectedLecturesArr},
-                         startTime: {"$gte": mon}};
+                         startTime: {'$gte': mon}};
 
             Lecture.find(query).exec(function(err, lectures) {
                 if (err) { res.status(500).send(err); }
@@ -66,7 +66,7 @@ router.route("/users/:user_id")
 
 // on routes that end in /lectures/upcoming
 // this returns all lectures since monday of the current week
-router.route("/upcoming")
+router.route('/upcoming')
 
     // get upcoming lectures (GET /$apiBaseUrl/lectures/upcoming)
     .post(function(req, res) {
@@ -75,8 +75,8 @@ router.route("/upcoming")
         mon.minute(0);
         mon.seconds(0);
 
-        var reqGroups = JSON.parse(req.body.groups || "[]");
-        var query = { groups: { $in: reqGroups }, "startTime": {"$gte": mon}};
+        var reqGroups = JSON.parse(req.body.groups || '[]');
+        var query = { groups: { $in: reqGroups }, 'startTime': {'$gte': mon}};
 
         // if no reqGroups provided, return all lectures
         if (reqGroups.length === 0) {
@@ -86,19 +86,19 @@ router.route("/upcoming")
         // check if we got a proper array
         if (reqGroups) {
             Lecture.find(query).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
-                if (err) { res.status(500).send(err + " - data was: " + reqGroups);  }
+                if (err) { res.status(500).send(err + ' - data was: ' + reqGroups);  }
                 res.status(200).json(lectures);
                 res.end();
             });
         } else {
-            res.status(400).json({ error: "ohh that query looks wrong to me: " + reqGroups });
+            res.status(400).json({ error: 'ohh that query looks wrong to me: ' + reqGroups });
             return;
         }
     });
 
 
 // on routes that end in /lectures/groups
-router.route("/groups")
+router.route('/groups')
 
     // get lectures for specific groups (POST /$apiBaseUrl/lectures/groups)
     .post(function(req, res) {
@@ -107,8 +107,8 @@ router.route("/groups")
         var today = new Date();
         today.setHours(0,0,0,0);
 
-        var reqGroups = JSON.parse(req.body.groups || "[]");
-        var query = { groups: { $in: reqGroups }, "endTime": {"$gte": today}};
+        var reqGroups = JSON.parse(req.body.groups || '[]');
+        var query = { groups: { $in: reqGroups }, 'endTime': {'$gte': today}};
 
         // if no reqGroups provided, return all lectures
         if (reqGroups.length === 0) {
@@ -118,19 +118,19 @@ router.route("/groups")
         // check if we got a proper array
         if (reqGroups) {
             Lecture.find(query).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
-                if (err) { res.status(500).send(err + " - data was: " + reqGroups);  }
+                if (err) { res.status(500).send(err + ' - data was: ' + reqGroups);  }
                 res.status(200).json(lectures);
                 res.end();
             });
         } else {
-            res.status(400).json({ error: "ohh that query looks wrong to me: " + reqGroups });
+            res.status(400).json({ error: 'ohh that query looks wrong to me: ' + reqGroups });
             return;
         }
     });
 
 
 // on routes that end in /lectures/weekly
-router.route("/weekly")
+router.route('/weekly')
 
     // get lectures for specific groups (POST /$apiBaseUrl/lectures/groups)
     .post(function(req, res) {
@@ -144,8 +144,8 @@ router.route("/weekly")
         sun.minute(59);
         sun.seconds(59);
 
-        var reqGroups = JSON.parse(req.body.groups || "[]");
-        var query = { groups: { $in: reqGroups }, "startTime": {"$gte": mon}, "endTime": {"$lte": sun}};
+        var reqGroups = JSON.parse(req.body.groups || '[]');
+        var query = { groups: { $in: reqGroups }, 'startTime': {'$gte': mon}, 'endTime': {'$lte': sun}};
 
         // if no reqGroups provided, return all lectures
         if (reqGroups.length === 0) {
@@ -155,19 +155,19 @@ router.route("/weekly")
         // check if we got a proper array
         if (reqGroups) {
             Lecture.find(query).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
-                if (err) { res.status(500).send(err + " - data was: " + reqGroups);  }
+                if (err) { res.status(500).send(err + ' - data was: ' + reqGroups);  }
                 res.status(200).json(lectures);
                 res.end();
             });
         } else {
-            res.status(400).json({ error: "ohh that query looks wrong to me: " + reqGroups });
+            res.status(400).json({ error: 'ohh that query looks wrong to me: ' + reqGroups });
             return;
         }
     });
 
 
 // on routes that end in /lectures/:lecture_id
-router.route("/:lecture_id")
+router.route('/:lecture_id')
 
     // get lecture with that id (GET /$apiBaseUrl/lectures/:lecture_id)
     .get(function(req, res) {

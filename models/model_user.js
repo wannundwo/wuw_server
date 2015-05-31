@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-var mongoose = require("mongoose");
-var utils = require("../utils");
+var mongoose = require('mongoose');
+var utils = require('../utils');
 
 var selectedLecturesSchema = new mongoose.Schema({
     groupName: String,
@@ -27,4 +27,4 @@ var UserSchema = new mongoose.Schema({
 
 
 // create model from our schema & export it
-module.exports = mongoose.model("User", UserSchema, "users");
+module.exports = mongoose.model('User', UserSchema, 'users');

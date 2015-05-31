@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-var mongoose = require("mongoose");
-var utils = require("../utils");
+var mongoose = require('mongoose');
+var utils = require('../utils');
 
 // create mongodb schema for our lectures
 var LectureSchema = new mongoose.Schema({
@@ -16,9 +16,9 @@ var LectureSchema = new mongoose.Schema({
     toJSON: { virtuals: true }
 });
 
-LectureSchema.virtual("color").get(function () {
+LectureSchema.virtual('color').get(function () {
     return utils.stringToColor(this.lectureName);
 });
 
 // create model from our schema & export it
-module.exports = mongoose.model("Lecture", LectureSchema, "lectures");
+module.exports = mongoose.model('Lecture', LectureSchema, 'lectures');
