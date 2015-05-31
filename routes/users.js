@@ -38,11 +38,11 @@ router.route('/:deviceId/lectures')
         user.platformVersion = req.body.platformVersion;
         user.pushToken = req.body.pushToken;
         user.appVersion = req.body.appVersion;
-        user.selectedLectures = req.body.selectedLectures || [];
         user.lastSeen = now;
 
         // create an object from our document
         var upsertData = user.toObject();
+        upsertData.selectedLectures = req.body.selectedLectures;
         // delete attributes to upsert
         delete upsertData._id;
         delete upsertData.firstSeen;
