@@ -5,19 +5,19 @@ var cheerio = require("cheerio");
 var mongoose = require("mongoose");
 var async = require("async");
 var crypto = require("crypto");
-
+var path = require('path');
 
 // how many weeks should we parse?
 var weeksToParse = 3;
-
 
 // mongodb
 var mongohost="localhost:27017";
 var mongodb=process.env.WUWDB || "wuw";
 var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
-// connect
-mongoose.connect(mongoConnection);
 
+// running as module or standalone?
+var standalone = !module.parent;
+var scriptName = path.basename(module.filename, path.extname(module.filename));
 
 // parsing
 var parse = function(html, cb) {
@@ -144,31 +144,39 @@ var startParser = function() {
     // create the urls to parse
     var urls = createUrls();
 
-    console.log("started parsing of " + weeksToParse + " weeks (this inlcuded)...");
+    console.log('[' + (new Date()) + '] ' + scriptName + ': started with { weeksToParse: ' + weeksToParse + ' }');
+    // simple progress display if run as standalone
+    if (standalone) { process.stdout.write(" "); }
 
     // drop current collection to get a fresh result
     mongoose.connection.collections.dishes.drop(function(err) {
         if(err) { console.log(err); }
-
-        console.log("dropped old \""+ Dish.collection.name + "\" collection, lets start clean...");
 
         // parse every url (max. 5 parallel, dont fuck the studentenwerk)
         async.eachLimit(urls, 5, function(url, cb) {
             request(url, function(error, response, html) {
                 if(!error) {
                     // parse html with all dishes for choosen date
-                    parse(html, cb);
+                    parse(html, function() {
+                        // simple progress display if run as standalone
+                        if (standalone) { process.stdout.write(" *"); }
+                        cb();
+                    });
                 }
             });
         }, function() {
-            // everything done
-            mongoose.disconnect();
-            console.log("...done!");
+            // disconnect mongodb if run as standalone
+            if (standalone) {
+                process.stdout.write("\n");
+                mongoose.disconnect();
+            }
+
+            console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully');
         });
     });
 };
 
-// start the magic
-startParser();
+// immediately start parsing if run as standalone
+if (standalone) { startParser(); }
 
 module.exports = { startParser: startParser, parse: parse };

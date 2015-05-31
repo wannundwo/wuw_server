@@ -6,16 +6,19 @@ var mongoose = require("mongoose");
 var async = require("async");
 var crypto = require("crypto");
 var utils = require("./utils");
-
+var path = require('path');
 
 // how many days should we parse?
 var daysToParse = process.env.WUWDAYS || 21;
-
 
 // mongodb
 var mongohost="localhost:27017";
 var mongodb=process.env.WUWDB || "wuw";
 var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
+
+// running as module or standalone?
+var standalone = !module.parent;
+var scriptName = path.basename(module.filename, path.extname(module.filename));
 
 // parsing
 var parse = function(html, cb) {
@@ -102,12 +105,12 @@ var startParser = function() {
     // create the urls to parse
     var urls = createUrls();
 
-    console.log("\n * lsf parser started\n");
-    console.log("  * parsing " + daysToParse + " days");
-    process.stdout.write("\n   ");
-
     // get current datetime
     var today = new Date();
+
+    console.log('[' + today + '] ' + scriptName + ': started with { daysToParse: ' + daysToParse + ' }');
+    // simple progress display if run as standalone
+    if (standalone) { process.stdout.write(" "); }
 
     // remove upcoming lectures (and get fresh data)
     Lecture.remove({ startTime: {"$gte": today} }, function (err) {
@@ -120,21 +123,25 @@ var startParser = function() {
                 if(!error) {
                     // parse html with all lectures for choosen date
                     parse(html, function() {
-                        // simple progress display
-                        process.stdout.write(" *");
+                        // simple progress display if run as standalone
+                        if (standalone) { process.stdout.write(" *"); }
                         cb();
                     });
                 }
             });
         }, function() {
-            // everything done
-            mongoose.disconnect();
-            console.log("\n\n  * done!\n");
+            // disconnect mongodb if run as standalone
+            if (standalone) {
+                process.stdout.write("\n");
+                mongoose.disconnect();
+            }
+
+            console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully');
         });
     });
 };
 
-// start the magic
-startParser();
+// immediately start parsing if run as standalone
+if (standalone) { startParser(); }
 
 module.exports = { startParser: startParser, parse: parse };

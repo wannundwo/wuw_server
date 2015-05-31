@@ -10,6 +10,10 @@ var mongoose = require("mongoose");
 var morgan = require("morgan");
 var https = require("https");
 var fs = require("fs");
+var schedule = require('node-schedule');
+
+// import parser modules
+var parser = { lsf: require('./parser_lsf'), mensa: require('./parser_mensa') };
 
 
 // api version & url
@@ -39,7 +43,9 @@ var mongohost="localhost:27017";
 var mongodb=process.env.WUWDB || "wuw";
 var mongoConnection="mongodb://" + mongohost + "/" + mongodb;
 // connect
-mongoose.connect(mongoConnection);
+if(mongoose.connection.readyState === 0) {
+    mongoose.connect(mongoConnection);
+}
 
 // create models from our schemas
 var Lecture = require("./models/model_lecture");
@@ -66,7 +72,7 @@ app.use(function(req, res, next) {
 });
 
 // middleware to use for all requests
-router.use(function(req, res, next) {  next(); });
+//router.use(function(req, res, next) {  next(); });
 
 // api home route (GET /$apiBaseUrl)
 router.get("/", function(req, res) {
@@ -104,6 +110,18 @@ app.use(function(err, req, res, next) {
     }
 });
 
+
+// schedule parser jobs
+var jobs = [
+    // parser_lsf
+    schedule.scheduleJob('45 4 * * 1-5', function(){
+        parser.lsf.startParser();
+    }),
+    // parser_mensa
+    schedule.scheduleJob('35 4 * * 0,6', function(){
+        parser.mensa.startParser();
+    })
+];
 
 
 // start the server
