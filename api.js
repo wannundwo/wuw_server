@@ -92,19 +92,18 @@ app.get('*', function(req, res, next) {
     next(err);
 });
 
-// handle 404 error
+// handle error
 app.use(function(err, req, res, next) {
-    // if its not a 404, pass to next handler
-    if(err.status !== 404) { return next(err); }
-    // send 404
-    res.status(404).send({ msg: 'whoopsie!' });
+    if(err.status === 404) {
+        // send 404
+        res.status(404).send({ msg: 'whoopsie!' });
+    } else {
+        // log error
+        console.error(err);
+        res.status(500).send({ msg: 'big whoopsie!' });
+    }
 });
 
-// handle other errors
-app.use(function(err, req, res, next) {
-    console.error(err);
-    res.status(500).send({ msg: 'big whoopsie!' });
-});
 
 
 // start the server
