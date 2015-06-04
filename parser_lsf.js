@@ -15,6 +15,7 @@ var daysToParse = process.env.WUWDAYS || 21;
 var mongohost='localhost:27017';
 var mongodb=process.env.WUWDB || 'wuw';
 var mongoConnection='mongodb://' + mongohost + '/' + mongodb;
+var mongoParserCon=mongoose.createConnection(mongoConnection);
 
 // running as module or standalone?
 var standalone = !module.parent;
@@ -23,7 +24,7 @@ var scriptName = path.basename(module.filename, path.extname(module.filename));
 // parsing
 var parse = function(html, cb) {
     // create models from our schemas
-    var Lecture = require('./models/model_lecture');
+    var Lecture = require('./models/model_lecture')(mongoParserCon);
 
     // init cheerio with our html
     var $ = cheerio.load(html);
@@ -95,12 +96,12 @@ var createUrls = function() {
 
 var startParser = function() {
     // connect to mongodb (if not already)
-    if(mongoose.connection.readyState === 0) {
-        mongoose.connect(mongoConnection);
-    }
+    // if(mongoose.connection.readyState === 0) {
+    //     mongoose.connect(mongoConnection);
+    // }
 
     // create model from our schema (needed for drop)
-    var Lecture = require('./models/model_lecture');
+    var Lecture = require('./models/model_lecture')(mongoParserCon);
 
     // create the urls to parse
     var urls = createUrls();
@@ -133,7 +134,7 @@ var startParser = function() {
             // disconnect mongodb if run as standalone
             if (standalone) {
                 process.stdout.write('\n');
-                mongoose.disconnect();
+                mongoParserCon.close();
             }
 
             console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully');

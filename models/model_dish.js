@@ -8,45 +8,50 @@ var mensaCategories = ['Vorspeise', 'Das Komplettpaket', 'Die solide Basis', 'Bi
 var mensaAdditives = ['mit Konservierungsstoff', 'mit Farbstoff', 'mit Antioxidationsmittel', 'mit Geschmacksverstärker', 'geschwefelt', 'gewachst', 'mit Phosphat', 'mit Süßungsmittel', 'enthält eine Phenylalaninquelle', 'geschwärzt'];
 var mensaAllergens = { 'En': 'Erdnuss', 'Fi': 'Fisch', 'Gl': 'Glutenhaltiges Getreide', 'Ei': 'Eier', 'Kr': 'Krebstiere (Krusten- und Schalentiere)', 'Lu': 'Lupine', 'La': 'Milch und Laktose', 'Nu': 'Schalenfrüchte (Nüsse)', 'Sw': 'Schwefeldioxid (SO2) und Sulfite', 'Sl': 'Sellerie', 'Sf': 'Senf', 'Se': 'Sesam', 'So': 'Soja', 'Wt': 'Weichtiere'};
 
+module.exports = function(dbCon) {
 
-// create mongodb schema for our lectures
-var DishSchema = new mongoose.Schema({
-    dishName: String,
-    date: Date,
-    priceInternal: Number,
-    priceExternal: Number,
-    attributes: [String],
-    shortCat: Number,
-    shortAdd: [Number],
-    shortAllerg: [String]
-}, {
-    toObject: { virtuals: true },
-    toJSON: { virtuals: true }
-});
-
-DishSchema.virtual('category').get(function () {
-    return mensaCategories[this.shortCat];
-});
-
-DishSchema.virtual('additives').get(function () {
-    var adds = [];
-    this.shortAdd.forEach(function(a) {
-        adds.push(mensaAdditives[a]);
+    // create mongodb schema for our lectures
+    var DishSchema = new mongoose.Schema({
+        dishName: String,
+        date: Date,
+        priceInternal: Number,
+        priceExternal: Number,
+        attributes: [String],
+        shortCat: Number,
+        shortAdd: [Number],
+        shortAllerg: [String]
+    }, {
+        toObject: { virtuals: true },
+        toJSON: { virtuals: true }
     });
-    return adds;
-});
 
-DishSchema.virtual('allergens').get(function () {
-    var allergs = [];
-    this.shortAllerg.forEach(function(a) {
-        allergs.push(mensaAllergens[a]);
+    // add virtual functions
+    DishSchema.virtual('category').get(function () {
+        return mensaCategories[this.shortCat];
     });
-    return allergs;
-});
 
-DishSchema.virtual('color').get(function () {
-    return utils.stringToColor(this.category);
-});
+    DishSchema.virtual('additives').get(function () {
+        var adds = [];
+        this.shortAdd.forEach(function(a) {
+            adds.push(mensaAdditives[a]);
+        });
+        return adds;
+    });
 
-// create model from our schema & export it
-module.exports = mongoose.model('Dish', DishSchema, 'dishes');
+    DishSchema.virtual('allergens').get(function () {
+        var allergs = [];
+        this.shortAllerg.forEach(function(a) {
+            allergs.push(mensaAllergens[a]);
+        });
+        return allergs;
+    });
+
+    DishSchema.virtual('color').get(function () {
+        return utils.stringToColor(this.category);
+    });
+
+    // choose connection
+    var con = dbCon ? dbCon : mongoose;
+    // return a model
+    return con.model('Dish', DishSchema, 'dishes');
+};

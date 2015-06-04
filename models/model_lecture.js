@@ -3,22 +3,28 @@
 var mongoose = require('mongoose');
 var utils = require('../wuw_utils');
 
-// create mongodb schema for our lectures
-var LectureSchema = new mongoose.Schema({
-    lectureName: String,
-    rooms: [String],
-    groups: [String],
-    startTime: Date,
-    endTime: Date,
-    docents: [String]
-}, {
-    toObject: { virtuals: true },
-    toJSON: { virtuals: true }
-});
+module.exports = function(dbCon) {
 
-LectureSchema.virtual('color').get(function () {
-    return utils.stringToColor(this.lectureName);
-});
+    // create mongodb schema for our lectures
+    var LectureSchema = new mongoose.Schema({
+        lectureName: String,
+        rooms: [String],
+        groups: [String],
+        startTime: Date,
+        endTime: Date,
+        docents: [String]
+    }, {
+        toObject: { virtuals: true },
+        toJSON: { virtuals: true }
+    });
 
-// create model from our schema & export it
-module.exports = mongoose.model('Lecture', LectureSchema, 'lectures');
+    // add a virtual function for color generation
+    LectureSchema.virtual('color').get(function () {
+        return utils.stringToColor(this.lectureName);
+    });
+
+    // choose connection
+    var con = dbCon ? dbCon : mongoose;
+    // return a model
+    return mongoose.model('Lecture', LectureSchema, 'lectures');
+};
