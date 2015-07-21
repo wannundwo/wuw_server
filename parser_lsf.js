@@ -30,9 +30,10 @@ var parse = function(html, cb) {
 
     // get date for this day
     var curDate = $('h2').text().split(', ')[1];
-    var curDateArr = curDate.split('.');
-    var intDate = curDateArr[1] + '/' + curDateArr[0] + '/' + curDateArr[2];
-
+    if(curDate) {
+        var curDateArr = curDate.split('.');
+        var intDate = curDateArr[1] + '/' + curDateArr[0] + '/' + curDateArr[2];
+    }
 
     // parse each single lecture
     async.each($('tr').not(':first-child'), function(lectureLine, trcb) {
