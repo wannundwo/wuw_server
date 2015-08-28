@@ -110,6 +110,7 @@ var startParser = function() {
     var today = new Date();
 
     console.log('[' + today + '] ' + scriptName + ': started with { daysToParse: ' + daysToParse + ' }');
+
     // simple progress display if run as standalone
     if (standalone) { process.stdout.write(' '); }
 

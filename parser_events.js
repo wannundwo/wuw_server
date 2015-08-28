@@ -32,6 +32,9 @@ var startParser = function() {
 
     console.log('[' + (new Date()) + '] ' + scriptName + ': started with { }');
 
+    // simple progress display if run as standalone
+    if (standalone) { process.stdout.write(' '); }
+
     // drop current collection to get a fresh result
     mongoose.connection.collections.events.drop(function(err) {
         if(err) { console.log(err); }
@@ -64,11 +67,16 @@ var startParser = function() {
                             if(ev.Event_Url !== '') { eventObj.url = ev.Event_Url; }
 
                             // do we need upserting for events? or clean the hole collection every time?
-                            Event.update({ _id: eventObj.id }, { $set: eventObj.toObject()  }, { upsert: true }, cb);
+                            Event.update({ _id: eventObj.id }, { $set: eventObj.toObject()  }, { upsert: true }, function() {
+                                // simple progress display if run as standalone
+                                if (standalone) { process.stdout.write(' *'); }
+                                cb();
+                            });
 
                         }, function() {
                             // when everything is done, clean up
                             if (standalone) {
+                                process.stdout.write('\n');
                                 mongoose.disconnect();
                             }
                             console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully');
