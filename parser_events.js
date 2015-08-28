@@ -9,7 +9,6 @@ var utils = require('./wuw_utils');
 var path = require('path');
 
 // data source
-//var url = 'http://php.rz.hft-stuttgart.de/hftapp/raumbelegunghftapp.php';
 var url = 'http://localhost:8000/events.xml';
 
 // mongodb
@@ -21,6 +20,7 @@ var mongoConnection='mongodb://' + mongohost + '/' + mongodb;
 var standalone = !module.parent;
 var scriptName = path.basename(module.filename, path.extname(module.filename));
 
+// main function
 var startParser = function() {
     // connect to mongodb (if not already)
     if(mongoose.connection.readyState === 0) {
@@ -35,22 +35,22 @@ var startParser = function() {
     // simple progress display if run as standalone
     if (standalone) { process.stdout.write(' '); }
 
-    // drop current collection to get a fresh result
-    mongoose.connection.collections.events.drop(function(err) {
+    // fetch xml
+    request(url, function(err, response, xml) {
         if(err) { console.log(err); }
+        else {
 
-        // fetch xml
-        request(url, function(err, response, xml) {
-            if(err) { console.log(err); }
-            else {
+            // parse xml
+            parseString(xml, {explicitArray: false}, function (err, result) {
+                if(err) { console.log(err); }
+                else {
 
-                // parse xml
-                parseString(xml, {explicitArray: false}, function (err, result) {
-                    if(err) { console.log(err); }
-                    else {
+                    // drop current collection to get a fresh result
+                    mongoose.connection.collections.events.drop(function(err) {
+                        if(err) { console.log(err); }
 
                         // process each event
-                        async.eachLimit(result.Veranstaltungen.Veranstaltung, 5, function(ev, cb) {
+                        async.eachLimit(result.Veranstaltungen.Veranstaltung, 10, function(ev, cb) {
 
                             // create an event object from our model
                             var eventObj = new Event();
@@ -66,8 +66,8 @@ var startParser = function() {
                             if(ev.Description !== 'None') { eventObj.descr = ev.Description; }
                             if(ev.Event_Url !== '') { eventObj.url = ev.Event_Url; }
 
-                            // do we need upserting for events? or clean the hole collection every time?
-                            Event.update({ _id: eventObj.id }, { $set: eventObj.toObject()  }, { upsert: true }, function() {
+                            // this is just inserting, not upserting!
+                            Event.update({ title: eventObj.title }, { $set: eventObj.toObject()  }, { upsert: true }, function() {
                                 // simple progress display if run as standalone
                                 if (standalone) { process.stdout.write(' *'); }
                                 cb();
@@ -81,14 +81,15 @@ var startParser = function() {
                             }
                             console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully');
                         });
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
     });
 };
 
 // immediately start parsing if run as standalone
 if (standalone) { startParser(); }
 
+// export function
 module.exports = { startParser: startParser };
