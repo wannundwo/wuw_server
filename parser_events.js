@@ -49,10 +49,10 @@ var startParser = function() {
                     mongoose.connection.collections.events.drop(function(err) {
                         if(err) { console.log(err); }
 
-                        // process each event
+                        // process each element
                         async.eachLimit(result.Veranstaltungen.Veranstaltung, 10, function(ev, cb) {
 
-                            // create an event object from our model
+                            // create an object from our model
                             var eventObj = new Event();
                             // set attributes
                             eventObj.title = ev.Titel;
