@@ -1,25 +1,31 @@
 'use strict';
 
-var request = require('request');
-var mongoose = require('mongoose');
-var async = require('async');
+// core
 var crypto = require('crypto');
-var parseString = require('xml2js').parseString;
+var path = require('path');
+// npm
+var async = require('async');
+var mongoose = require('mongoose');
+var request = require('request');
+var xml2js = require('xml2js');
+var parseString = xml2js.parseString;
+// wuw
 var utils = require('./wuw_utils');
 
 
 // data source
-//var url = 'http://php.rz.hft-stuttgart.de/hftapp/raumbelegunghftapp.php';
-var url = 'http://localhost:8000/hft.xml';
-
+var url = 'http://localhost:8000/lectures.xml';
 
 // mongodb
 var mongohost='localhost:27017';
 var mongodb=process.env.WUWDB || 'wuw';
 var mongoConnection='mongodb://' + mongohost + '/' + mongodb;
-// connect
-mongoose.connect(mongoConnection);
 
+// running as module or standalone?
+var standalone = !module.parent;
+var scriptName = path.basename(module.filename, path.extname(module.filename));
+
+// main function
 var startParser = function() {
     // connect to mongodb (if not already)
     if(mongoose.connection.readyState === 0) {
@@ -29,26 +35,26 @@ var startParser = function() {
     // create model from our schema (needed for drop)
     var Lecture = require('./models/model_lecture');
 
-    console.log('\n * lsf parser started\n');
+    console.log('[' + (new Date()) + '] ' + scriptName + ': started with { }');
 
-    // drop current lecture collection to get a fresh result
-    mongoose.connection.collections.lectures.drop(function(err) {
+    // simple progress display if run as standalone
+    if (standalone) { process.stdout.write(' '); }
+
+    // fetch xml
+    request(url, function(err, response, xml) {
         if(err) { console.log(err); }
+        else {
 
-        console.log('  * dropped old \''+ Lecture.collection.name + '\' collection...');
+            // parse xml
+            parseString(xml, function (err, result) {
+                if(err) { console.log(err); }
+                else {
 
-        request(url, function(err, response, xml) {
-            if(err) { console.log(err); }
-            else {
-                console.log('  * got XML data');
+                    // drop current collection to get a fresh result
+                    mongoose.connection.collections.lectures.drop(function(err) {
+                        if(err) { console.log(err); }
 
-                // parse xml
-                parseString(xml, function (err, result) {
-                    if(err) { console.log(err); }
-                    else {
-                        console.log('  * parsed data to json');
-                        console.log('  * starting import');
-
+                        // process each element
                         async.eachLimit(result.Raumbelegungen.dbrow, 5, function(lecture, cb) {
 
                             // create Lecture from our Model
@@ -61,39 +67,43 @@ var startParser = function() {
                             Lec.hashCode = utils.hashCode(Lec.lectureName+Lec.startTime);
                             Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
 
-                            //console.log(Lec);
-
                             // create an object from our document
                             var upsertData = Lec.toObject();
-                            // delete attributes to upsert
+                            // delete/set attributes to upsert
                             delete upsertData.rooms;
                             delete upsertData.groups;
-
-                            var room = lecture.raum[0];
+                            var room = lecture.Raum[0];
                             var group = lecture.semesterverband[0];
-
-                            console.log(lecture.raum + ' -> ' + room);
-                            console.log(lecture.semesterverband + ' -> ' + group);
-                            console.log();
-
-                            //Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, cb);
 
                             // lectures without a group/room are useless...
                             if(group !== '' && room !== '') {
                                 // save lecture to db & call callback
-                                Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, cb);
+                                Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
+                                    // simple progress display if run as standalone
+                                    if (standalone) { process.stdout.write(' *'); }
+                                    cb();
+                                });
                             } else {
                                 cb();
                             }
+
+                        }, function() {
+                            // when everything is done, clean up
+                            if (standalone) {
+                                process.stdout.write('\n');
+                                mongoose.disconnect();
+                            }
+                            console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully');
                         });
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
     });
 };
 
-// start the magic
-startParser();
+// immediately start parsing if run as standalone
+if (standalone) { startParser(); }
 
-//module.exports = { startParser: startParser, parse: parse };
+// export function
+module.exports = { startParser: startParser };

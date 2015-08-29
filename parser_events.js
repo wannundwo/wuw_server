@@ -1,12 +1,17 @@
 'use strict';
 
-var request = require('request');
-var mongoose = require('mongoose');
-var async = require('async');
+// core
 var crypto = require('crypto');
-var parseString = require('xml2js').parseString;
-var utils = require('./wuw_utils');
 var path = require('path');
+// npm
+var async = require('async');
+var mongoose = require('mongoose');
+var request = require('request');
+var xml2js = require('xml2js');
+var parseString = xml2js.parseString;
+// wuw
+var utils = require('./wuw_utils');
+
 
 // data source
 var url = 'http://localhost:8000/events.xml';
@@ -41,7 +46,7 @@ var startParser = function() {
         else {
 
             // parse xml
-            parseString(xml, {explicitArray: false}, function (err, result) {
+            parseString(xml, { explicitArray: false, normalize: true }, function (err, result) {
                 if(err) { console.log(err); }
                 else {
 
