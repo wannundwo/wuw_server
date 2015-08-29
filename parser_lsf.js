@@ -1,12 +1,15 @@
 'use strict';
 
-var request = require('request');
+// core
+var path = require('path');
+// npm
+var async = require('async');
 var cheerio = require('cheerio');
 var mongoose = require('mongoose');
-var async = require('async');
-var crypto = require('crypto');
+var request = require('request');
+// wuw
 var utils = require('./wuw_utils');
-var path = require('path');
+
 
 // how many days should we parse?
 var daysToParse = process.env.WUWDAYS || 21;

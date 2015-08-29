@@ -1,11 +1,15 @@
 'use strict';
 
-var request = require('request');
+// core
+var path = require('path');
+// npm
+var async = require('async');
 var cheerio = require('cheerio');
 var mongoose = require('mongoose');
-var async = require('async');
-var crypto = require('crypto');
-var path = require('path');
+var request = require('request');
+// wuw
+var utils = require('./wuw_utils');
+
 
 // how many weeks should we parse?
 var weeksToParse = 3;
