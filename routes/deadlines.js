@@ -60,9 +60,10 @@ router.route('/')
         req.assert('deadline', 'deadline must be a valid date').isDate();
         req.assert('deadline', 'deadline must not be empty').notEmpty();
         req.assert('info', 'info must not be empty').notEmpty();
-        //req.assert('lectureName', 'lectureName must not be empty').notEmpty();
-        //req.assert('group', 'group must not be empty').notEmpty();
-        //req.assert('uuid', 'oh kiddie...').notEmpty();
+        //req.assert('shortLectureName', 'shortLectureName must not be empty').notEmpty();
+        req.assert('group.groupName', 'groupName must not be empty').notEmpty();
+        req.assert('group.lectureName', 'lectureName must not be empty').notEmpty();
+        req.assert('uuid', 'createdBy must not be empty').notEmpty();
 
         // if there are errors, send 400
         var errors = req.validationErrors(true);
@@ -74,7 +75,7 @@ router.route('/')
         // set attributes
         deadline.deadline = req.body.deadline;
         deadline.info = req.body.info;
-        deadline.shortLectureName = req.body.shortLectureName;
+        //deadline.shortLectureName = req.body.shortLectureName;
         deadline.group.groupName = req.body.group.groupName;
         deadline.group.lectureName = req.body.group.lectureName;
         deadline.createdBy = req.body.uuid;
