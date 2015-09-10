@@ -81,6 +81,8 @@ router.get('/', function(req, res) {
 });
 
 // register our routes & routers
+router.use('/news', require('./routes/news'));
+router.use('/events', require('./routes/events'));
 router.use('/lectures', require('./routes/lectures'));
 router.use('/deadlines', require('./routes/deadlines'));
 router.use('/rooms', require('./routes/rooms'));
