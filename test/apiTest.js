@@ -9,6 +9,8 @@ var api = require('../api');
 
 // urls
 var apiBaseUrl = 'http://localhost:4342/api/v0/';
+var newsBaseUrl = apiBaseUrl + 'news';
+var eventsBaseUrl = apiBaseUrl + 'events';
 var lecturesBaseUrl = apiBaseUrl + 'lectures';
 var deadlinesBaseUrl = apiBaseUrl + 'deadlines';
 var groupsBaseUrl = apiBaseUrl + 'groups';
@@ -53,6 +55,58 @@ describe('API', function(){
 
 
     describe('routes', function() {
+
+        describe('news', function() {
+
+            it('/news should return 200', function(done) {
+                request(newsBaseUrl, function(error, response, html) {
+                    assert(!error, error);
+                    assert.equal(response.statusCode, 200);
+                    done();
+                });
+            });
+            it('/news should return >0 news entries', function(done) {
+                request(newsBaseUrl, function(error, response, html) {
+                    assert(!error, error);
+                    assert(html.length > 0);
+                    done();
+                });
+            });
+            it('/news/:news_id should return 500', function(done) {
+                request(newsBaseUrl + '/133731337', function(error, response, html) {
+                    assert(!error, error);
+                    assert.equal(response.statusCode, 500);
+                    done();
+                });
+            });
+        });
+
+
+        describe('events', function() {
+
+            it('/events should return 200', function(done) {
+                request(eventsBaseUrl, function(error, response, html) {
+                    assert(!error, error);
+                    assert.equal(response.statusCode, 200);
+                    done();
+                });
+            });
+            it('/events should return >0 news entries', function(done) {
+                request(eventsBaseUrl, function(error, response, html) {
+                    assert(!error, error);
+                    assert(html.length > 0);
+                    done();
+                });
+            });
+            it('/events/:event_id should return 500', function(done) {
+                request(eventsBaseUrl + '/133731337', function(error, response, html) {
+                    assert(!error, error);
+                    assert.equal(response.statusCode, 500);
+                    done();
+                });
+            });
+        });
+
 
         describe('lectures', function() {
 
