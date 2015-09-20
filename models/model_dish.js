@@ -1,7 +1,10 @@
 'use strict';
 
+// npm
 var mongoose = require('mongoose');
+// wuw
 var utils = require('../wuw_utils');
+
 
 // mensa constants, should be outsourced to mongo virtuals
 var mensaCategories = ['Vorspeise', 'Das Komplettpaket', 'Die solide Basis', 'Bio pur', 'Das grüne Glück', 'Der Renner', 'Beilagen', 'Nachtisch'];
@@ -9,7 +12,7 @@ var mensaAdditives = ['mit Konservierungsstoff', 'mit Farbstoff', 'mit Antioxida
 var mensaAllergens = { 'En': 'Erdnuss', 'Fi': 'Fisch', 'Gl': 'Glutenhaltiges Getreide', 'Ei': 'Eier', 'Kr': 'Krebstiere (Krusten- und Schalentiere)', 'Lu': 'Lupine', 'La': 'Milch und Laktose', 'Nu': 'Schalenfrüchte (Nüsse)', 'Sw': 'Schwefeldioxid (SO2) und Sulfite', 'Sl': 'Sellerie', 'Sf': 'Senf', 'Se': 'Sesam', 'So': 'Soja', 'Wt': 'Weichtiere'};
 
 
-// create mongodb schema for our lectures
+// create mongodb schema
 var DishSchema = new mongoose.Schema({
     dishName: String,
     date: Date,
@@ -24,6 +27,12 @@ var DishSchema = new mongoose.Schema({
     toJSON: { virtuals: true }
 });
 
+
+// create indexes
+DishSchema.index({date: 1, priceInternal: 1});
+
+
+// virtual functions
 DishSchema.virtual('category').get(function () {
     return mensaCategories[this.shortCat];
 });
@@ -47,6 +56,7 @@ DishSchema.virtual('allergens').get(function () {
 DishSchema.virtual('color').get(function () {
     return utils.stringToColor(this.category);
 });
+
 
 // create model from our schema & export it
 module.exports = mongoose.model('Dish', DishSchema, 'dishes');
