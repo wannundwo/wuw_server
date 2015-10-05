@@ -14,7 +14,7 @@ var utils = require('./wuw_utils');
 
 
 // data source
-var url = 'http://localhost:8000/lectures.xml';
+var url = 'http://php.rz.hft-stuttgart.de/hftapp/raumbelegunghftapp.php';
 
 // mongodb
 var mongohost='localhost:27017';
