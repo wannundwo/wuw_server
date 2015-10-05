@@ -72,7 +72,7 @@ var startParser = function() {
                             // delete/set attributes to upsert
                             delete upsertData.rooms;
                             delete upsertData.groups;
-                            var room = lecture.Raum[0];
+                            var room = lecture.bau + '/' + lecture.Raum[0];
                             var group = lecture.semesterverband[0];
 
                             // lectures without a group/room are useless...
