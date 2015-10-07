@@ -79,14 +79,19 @@ var startParser = function() {
                             delete upsertData.rooms;
                             delete upsertData.groups;
                             var room = lecture.bau + '/' + lecture.Raum[0];
-                            var group = lecture.semesterverband[0];
+
+                            // add dummy group if needed
+                            var group;
+                            if(!(group = lecture.semesterverband[0])) {
+                                group = '- frei wählbar -'
+                            }
 
                             // lectures without a group/room are useless...
                             if(room !== '') {
                                 // save lecture to db & call callback
                                 Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
                                     // simple progress display if run as standalone
-                                    //if (standalone) { process.stdout.write(' *'); }
+                                    if (standalone) { process.stdout.write(' *'); }
 
                                     // incr counter
                                     addedElements++;
@@ -105,7 +110,7 @@ var startParser = function() {
                                 process.stdout.write('\n');
                                 mongoose.disconnect();
                             }
-                            console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully added ' + addedElements + '/' + allElements + ' (' + (allElements - addedElements) + ' missing)');
+                            console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully! added ' + addedElements + '/' + allElements + ' (' + (allElements - addedElements) + ' missing)');
                         });
                     });
                 }
