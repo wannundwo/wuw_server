@@ -13,7 +13,7 @@ var fs = require('fs');
 var schedule = require('node-schedule');
 
 // import parser modules
-var parser = { lsf: require('./parser_lsf'), mensa: require('./parser_mensa') };
+var parser = { lsf: require('./parser_xml'), mensa: require('./parser_mensa') };
 
 
 // api version & url
