@@ -64,6 +64,7 @@ var startParser = function() {
                         // process each element
                         async.eachLimit(result.Raumbelegungen.dbrow, 15, function(lecture, cb) {
 
+                            // incr counter
                             allElements++;
 
                             // create Lecture from our Model
@@ -93,11 +94,11 @@ var startParser = function() {
                             if(room !== '') {
                                 // save lecture to db & call callback
                                 Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
-                                    // simple progress display if run as standalone
-                                    if (standalone && debug) { process.stdout.write(' *'); }
-
                                     // incr counter
                                     addedElements++;
+
+                                    // simple progress display if run as standalone
+                                    if (standalone && debug) { process.stdout.write(' *'); }
 
                                     // callback
                                     cb();
