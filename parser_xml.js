@@ -83,7 +83,7 @@ var startParser = function() {
                             // add dummy group if needed
                             var group;
                             if(!(group = lecture.semesterverband[0])) {
-                                group = '- frei wählbar -'
+                                group = '- frei wählbar -';
                             }
 
                             // lectures without a group/room are useless...
