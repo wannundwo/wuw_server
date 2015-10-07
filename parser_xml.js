@@ -54,8 +54,14 @@ var startParser = function() {
                     mongoose.connection.collections.lectures.drop(function(err) {
                         if(err) { console.log(err); }
 
+                        // counter
+                        var allElements = 0;
+                        var addedElements = 0;
+
                         // process each element
                         async.eachLimit(result.Raumbelegungen.dbrow, 5, function(lecture, cb) {
+
+                            allElements++;
 
                             // create Lecture from our Model
                             var Lec = new Lecture();
@@ -76,14 +82,20 @@ var startParser = function() {
                             var group = lecture.semesterverband[0];
 
                             // lectures without a group/room are useless...
-                            if(group !== '' && room !== '') {
+                            if(room !== '') {
                                 // save lecture to db & call callback
                                 Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
                                     // simple progress display if run as standalone
-                                    if (standalone) { process.stdout.write(' *'); }
+                                    //if (standalone) { process.stdout.write(' *'); }
+
+                                    // incr counter
+                                    addedElements++;
+
+                                    // callback
                                     cb();
                                 });
                             } else {
+                                // callback
                                 cb();
                             }
 
@@ -93,7 +105,7 @@ var startParser = function() {
                                 process.stdout.write('\n');
                                 mongoose.disconnect();
                             }
-                            console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully');
+                            console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully added ' + addedElements + '/' + allElements + ' (' + (allElements - addedElements) + ' missing)');
                         });
                     });
                 }
