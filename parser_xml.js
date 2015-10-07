@@ -25,6 +25,9 @@ var mongoConnection='mongodb://' + mongohost + '/' + mongodb;
 var standalone = !module.parent;
 var scriptName = path.basename(module.filename, path.extname(module.filename));
 
+// debug?
+var debug = process.env.WUWDEBUG || 0;
+
 // main function
 var startParser = function() {
     // connect to mongodb (if not already)
@@ -59,7 +62,7 @@ var startParser = function() {
                         var addedElements = 0;
 
                         // process each element
-                        async.eachLimit(result.Raumbelegungen.dbrow, 5, function(lecture, cb) {
+                        async.eachLimit(result.Raumbelegungen.dbrow, 15, function(lecture, cb) {
 
                             allElements++;
 
@@ -91,7 +94,7 @@ var startParser = function() {
                                 // save lecture to db & call callback
                                 Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
                                     // simple progress display if run as standalone
-                                    if (standalone) { process.stdout.write(' *'); }
+                                    if (standalone && debug) { process.stdout.write(' *'); }
 
                                     // incr counter
                                     addedElements++;
