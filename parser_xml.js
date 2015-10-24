@@ -59,7 +59,8 @@ var startParser = function() {
 
                         // counter
                         var allElements = 0;
-                        var addedElements = 0;
+                        var allLectures = 0;
+                        var addedLectures = 0;
 
                         // process each element
                         async.eachLimit(result.Raumbelegungen.dbrow, 15, function(lecture, cb) {
@@ -85,24 +86,40 @@ var startParser = function() {
                             var room = lecture.bau + '/' + lecture.Raum[0];
 
                             // add dummy group if needed
-                            var group;
-                            if(!(group = lecture.semesterverband[0])) {
-                                group = '- frei wählbar -';
+                            var groups;
+                            if(!(groups = lecture.semesterverband[0])) {
+                                groups = '- frei wählbar -';
                             }
+
+                            // split groups
+                            groups = groups.split(', ');
 
                             // lectures without a group/room are useless...
                             if(room !== '') {
-                                // save lecture to db & call callback
-                                Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
+
+                                // save lecture for each group
+                                async.eachLimit(groups, 5, function(group, cb) {
+
                                     // incr counter
-                                    addedElements++;
+                                    allLectures++;
 
-                                    // simple progress display if run as standalone
-                                    if (standalone && debug) { process.stdout.write(' *'); }
+                                    // save lecture to db & call callback
+                                    Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
 
+                                        // incr counter
+                                        addedLectures++;
+
+                                        // simple progress display if run as standalone
+                                        if (standalone && debug) { process.stdout.write(' *'); }
+
+                                        // callback
+                                        cb();
+                                    });
+                                }, function() {
                                     // callback
                                     cb();
                                 });
+
                             } else {
                                 // callback
                                 cb();
@@ -114,7 +131,7 @@ var startParser = function() {
                                 process.stdout.write('\n');
                                 mongoose.disconnect();
                             }
-                            console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully! added ' + addedElements + '/' + allElements + ' (' + (allElements - addedElements) + ' missing)');
+                            console.log('[' + (new Date()) + '] ' + scriptName + ': completed successfully! found ' + allElements + ' entries, added ' + addedLectures + '/' + allLectures + ' lectures (' + (allLectures - addedLectures) + ' missing)');
                         });
                     });
                 }
