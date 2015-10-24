@@ -131,11 +131,11 @@ var jobs = [
     // parser_news
     schedule.scheduleJob('25 4 * * *', function(){
         parser.news.startParser();
-    }),
-    // parser_events
-    schedule.scheduleJob('15 4 * * *', function(){
-        parser.events.startParser();
     })
+    // parser_events
+    // schedule.scheduleJob('15 4 * * *', function(){
+    //     parser.events.startParser();
+    // })
 ];
 
 
