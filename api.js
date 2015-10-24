@@ -13,7 +13,12 @@ var fs = require('fs');
 var schedule = require('node-schedule');
 
 // import parser modules
-var parser = { lsf: require('./parser_xml'), mensa: require('./parser_mensa') };
+var parser = {
+    lsf: require('./parser_xml'),
+    mensa: require('./parser_mensa'),
+    news: require('./parser_news'),
+    events: require('./parser_events')
+};
 
 
 // api version & url
@@ -116,12 +121,20 @@ app.use(function(err, req, res, next) {
 // schedule parser jobs
 var jobs = [
     // parser_lsf
-    schedule.scheduleJob('45 4 * * 1-5', function(){
+    schedule.scheduleJob('45 4 * * *', function(){
         parser.lsf.startParser();
     }),
     // parser_mensa
-    schedule.scheduleJob('35 4 * * 0,6', function(){
+    schedule.scheduleJob('35 4 * * *', function(){
         parser.mensa.startParser();
+    }),
+    // parser_news
+    schedule.scheduleJob('25 4 * * *', function(){
+        parser.news.startParser();
+    }),
+    // parser_events
+    schedule.scheduleJob('15 4 * * *', function(){
+        parser.events.startParser();
     })
 ];
 
