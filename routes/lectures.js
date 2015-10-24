@@ -41,7 +41,7 @@ router.route('/users/:user_id')
         var today = new Date();
         today.setHours(0,0,0,0);
         var laterDate = new Date();
-        laterDate.setDate(laterDate.getDate() + 14);
+        laterDate.setDate(laterDate.getDate() + 21);
 
         // get the users selected lectures
         User.findOne({'deviceId': req.params.user_id}, function(err, user) {
