@@ -32,10 +32,14 @@ router.route('/users/:user_id')
     .get(function(req, res) {
 
         // get monday of the current week
-        var mon = moment().day(1);
-        mon.hour(0);
-        mon.minute(0);
-        mon.seconds(0);
+        // var mon = moment().day(1);
+        // mon.hour(0);
+        // mon.minute(0);
+        // mon.seconds(0);
+
+        // today at 0:00
+        var today = new Date();
+        today.setHours(0,0,0,0);
 
         // get the users selected lectures
         User.findOne({'deviceId': req.params.user_id}, function(err, user) {
@@ -53,7 +57,7 @@ router.route('/users/:user_id')
 
             var query = {groups: {$in: selectedGroupsArr},
                          lectureName: {$in: selectedLecturesArr},
-                         startTime: {'$gte': mon}};
+                         startTime: {'$gte': today}};
 
             Lecture.find(query).exec(function(err, lectures) {
                 if (err) { res.status(500).send(err); }
