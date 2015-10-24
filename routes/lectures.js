@@ -39,8 +39,8 @@ router.route('/users/:user_id')
 
         // today at 0:00
         var today = new Date();
-        var laterDate = today;
         today.setHours(0,0,0,0);
+        var laterDate = new Date();
         laterDate.setDate(laterDate.getDate() + 14);
 
         // get the users selected lectures
