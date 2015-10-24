@@ -83,47 +83,44 @@ var startParser = function() {
                             // delete/set attributes to upsert
                             delete upsertData.rooms;
                             delete upsertData.groups;
-                            var room = lecture.bau + '/' + lecture.Raum[0];
+
+                            // add room if all needed info is present
+                            var room;
+                            if(lecture.bau && lecture.Raum[0]) {
+                                room = lecture.bau + '/' + lecture.Raum[0];
+                            }
 
                             // add dummy group if needed
                             var groups;
                             if(!(groups = lecture.semesterverband[0])) {
                                 groups = '- frei wählbar -';
                             }
-
-                            // split groups
+                            // split to array
                             groups = groups.split(', ');
 
-                            // lectures without a group/room are useless...
-                            if(room !== '') {
+                            // save lecture for each group
+                            async.eachLimit(groups, 5, function(group, cb) {
 
-                                // save lecture for each group
-                                async.eachLimit(groups, 5, function(group, cb) {
+                                // incr counter
+                                allLectures++;
+
+                                // save lecture to db & call callback
+                                Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
 
                                     // incr counter
-                                    allLectures++;
+                                    addedLectures++;
 
-                                    // save lecture to db & call callback
-                                    Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
+                                    // simple progress display if run as standalone
+                                    if (standalone && debug) { process.stdout.write(' *'); }
 
-                                        // incr counter
-                                        addedLectures++;
-
-                                        // simple progress display if run as standalone
-                                        if (standalone && debug) { process.stdout.write(' *'); }
-
-                                        // callback
-                                        cb();
-                                    });
-                                }, function() {
                                     // callback
                                     cb();
                                 });
 
-                            } else {
+                            }, function() {
                                 // callback
                                 cb();
-                            }
+                            });
 
                         }, function() {
                             // when everything is done, clean up
