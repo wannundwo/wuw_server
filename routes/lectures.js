@@ -55,11 +55,9 @@ router.route('/users/:user_id')
                 selectedLecturesArr.push(selectedLectures[i].lectureName);
             }
 
-            var query = {groups: {$in: selectedGroupsArr},
-                         lectureName: {$in: selectedLecturesArr},
-                         startTime: {'$gte': today}};
+            var query = {groups: {$in: selectedGroupsArr}, lectureName: {$in: selectedLecturesArr}, startTime: {'$gte': today}};
 
-            Lecture.find(query).exec(function(err, lectures) {
+            Lecture.find(query).sort({startTime: 1}).exec(function(err, lectures) {
                 if (err) { res.status(500).send(err); }
                 res.status(200).json(lectures);
                 res.end();
