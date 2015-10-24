@@ -39,7 +39,9 @@ router.route('/users/:user_id')
 
         // today at 0:00
         var today = new Date();
+        var laterDate = today;
         today.setHours(0,0,0,0);
+        laterDate.setDate(laterDate.getDate() + 14);
 
         // get the users selected lectures
         User.findOne({'deviceId': req.params.user_id}, function(err, user) {
@@ -55,7 +57,7 @@ router.route('/users/:user_id')
                 selectedLecturesArr.push(selectedLectures[i].lectureName);
             }
 
-            var query = {groups: {$in: selectedGroupsArr}, lectureName: {$in: selectedLecturesArr}, startTime: {'$gte': today}};
+            var query = {groups: {$in: selectedGroupsArr}, lectureName: {$in: selectedLecturesArr}, startTime: {'$gte': today, '$lte': laterDate}};
 
             Lecture.find(query).sort({startTime: 1}).exec(function(err, lectures) {
                 if (err) { res.status(500).send(err); }
