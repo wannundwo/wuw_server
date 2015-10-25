@@ -49,6 +49,10 @@ router.route('/lectures/:user_id')
 
             // get the users selected lectures
             User.findOne({'deviceId': req.params.user_id}, function(err, user) {
+                if (user == null) {
+                    res.status(500).send("user id not found");
+                }
+
                 var usersSelectedLectures = user.selectedLectures;
 
                 for (var i = 0; i < groups.length; i++) {
