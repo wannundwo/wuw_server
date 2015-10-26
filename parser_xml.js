@@ -105,7 +105,9 @@ var startParser = function() {
                                 allLectures++;
 
                                 // save lecture to db & call callback
-                                Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: { rooms: room, groups: group }  }, { upsert: true }, function() {
+                                var q = { groups: group };
+                                if (room) {q.rooms = room;}
+                                Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: q  }, { upsert: true }, function() {
 
                                     // incr counter
                                     addedLectures++;
