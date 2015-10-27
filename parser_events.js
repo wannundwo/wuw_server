@@ -69,7 +69,11 @@ var startParser = function() {
                             eventObj.modified = new Date(ev.modified);
                             // filter 'null' values from attributes
                             if(ev.Description !== 'None') { eventObj.descr = ev.Description; }
-                            if(ev.Event_Url !== '') { eventObj.url = ev.Event_Url; }
+
+                            // add base-url if not present
+                            if(ev.Event_Url !== '') {
+                                eventObj.url = (ev.Event_Url.substring(0, 4) === "http") ? ev.Event_Url : 'http://www.hft-stuttgart.de' + ev.Event_Url;
+                            }
 
                             // this is just inserting, not upserting!
                             Event.update({ title: eventObj.title }, { $set: eventObj.toObject()  }, { upsert: true }, function() {
