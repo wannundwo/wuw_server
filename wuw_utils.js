@@ -18,9 +18,10 @@ var stringToColor = function(str) {
         return '#444444';
     }
 
+    var hash = crypto.createHash('md5').update(str).digest('hex').substring(0, 12);
     var color = Please.make_color({
         saturation: 0.6,
-        seed: str,
+        seed: hash,
     })[0];
     return color;
 };
