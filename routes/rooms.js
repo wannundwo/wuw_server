@@ -41,7 +41,9 @@ router.route('/free')
                 var freeRooms;
                 if(usedRooms[0] && usedRooms[0].rooms) {
                     freeRooms = rooms[0].rooms.filter(function(e) {
-                        return (usedRooms[0].rooms.indexOf(e) < 0);
+                        if(e) {
+                            return (e.match(/\d\/\d\d\d ?.*/) && usedRooms[0].rooms.indexOf(e) < 0);
+                        }
                     });
                 } else {
                     // all rooms free
