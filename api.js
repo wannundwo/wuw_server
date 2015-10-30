@@ -94,6 +94,7 @@ router.use('/rooms', require('./routes/rooms'));
 router.use('/groups', require('./routes/groups'));
 router.use('/dishes', require('./routes/dishes'));
 router.use('/users', require('./routes/users'));
+router.use('/printers', require('./routes/printers'));
 // register base & default router
 app.use(apiBaseUrl, router);
 
