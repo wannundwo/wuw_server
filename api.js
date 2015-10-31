@@ -29,14 +29,33 @@ var apiBaseUrl = '/api/v' + apiVersion;
 // ssl
 try {
     var use_ssl = true;
-    var key = fs.readFileSync('./ssl-wuw.key');
-    var cert = fs.readFileSync('./ssl-wuw.crt');
+    var key = fs.readFileSync('./ssl.key');
+    var cert = fs.readFileSync('./ssl.crt');
     // load passphrase from file
     var pass = require('./ssl-pass');
     var https_options = {
         key: key,
         cert: cert,
-        passphrase: pass.passphrase
+        passphrase: pass.passphrase,
+        ciphers: [
+            "ECDHE-RSA-AES256-SHA384",
+            "DHE-RSA-AES256-SHA384",
+            "ECDHE-RSA-AES256-SHA256",
+            "DHE-RSA-AES256-SHA256",
+            "ECDHE-RSA-AES128-SHA256",
+            "DHE-RSA-AES128-SHA256",
+            "HIGH",
+            "!aNULL",
+            "!eNULL",
+            "!EXPORT",
+            "!DES",
+            "!RC4",
+            "!MD5",
+            "!PSK",
+            "!SRP",
+            "!CAMELLIA"
+        ].join(':'),
+        honorCipherOrder: true
     };
 } catch(err) {
     if (err) { use_ssl = false; }
