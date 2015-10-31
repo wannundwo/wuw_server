@@ -31,29 +31,31 @@ try {
     var use_ssl = true;
     var key = fs.readFileSync('./ssl.key');
     var cert = fs.readFileSync('./ssl.crt');
+    var dhparam = fs.readFileSync('./dh_2048.pem');
     // load passphrase from file
     var pass = require('./ssl-pass');
     var https_options = {
         key: key,
         cert: cert,
         passphrase: pass.passphrase,
+        dhparam: dhparam,
         ciphers: [
-            "ECDHE-RSA-AES256-SHA384",
-            "DHE-RSA-AES256-SHA384",
-            "ECDHE-RSA-AES256-SHA256",
-            "DHE-RSA-AES256-SHA256",
-            "ECDHE-RSA-AES128-SHA256",
-            "DHE-RSA-AES128-SHA256",
-            "HIGH",
-            "!aNULL",
-            "!eNULL",
-            "!EXPORT",
-            "!DES",
-            "!RC4",
-            "!MD5",
-            "!PSK",
-            "!SRP",
-            "!CAMELLIA"
+            'ECDHE-RSA-AES256-SHA384',
+            'DHE-RSA-AES256-SHA384',
+            'ECDHE-RSA-AES256-SHA256',
+            'DHE-RSA-AES256-SHA256',
+            'ECDHE-RSA-AES128-SHA256',
+            'DHE-RSA-AES128-SHA256',
+            'HIGH',
+            '!aNULL',
+            '!eNULL',
+            '!EXPORT',
+            '!DES',
+            '!RC4',
+            '!MD5',
+            '!PSK',
+            '!SRP',
+            '!CAMELLIA'
         ].join(':'),
         honorCipherOrder: true
     };
