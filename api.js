@@ -124,19 +124,18 @@ app.use(apiBaseUrl, router);
 app.get('*', function(req, res, next) {
     var err = new Error();
     err.status = 404;
+    err.message = "404 Not Found";
     next(err);
 });
 
 // handle error
 app.use(function(err, req, res, next) {
-    if(err.status === 404) {
-        // send 404
-        res.status(404).send({ msg: 'whoopsie!' });
-    } else {
-        // log error
-        console.error(err);
-        res.status(500).send({ msg: 'big whoopsie!' });
-    }
+    console.error({
+        status: err.status,
+        message: err.message,
+        stack: err.stack.split('\n')
+    });
+    res.status(err.status || 500).send({ error: err.message });
 });
 
 

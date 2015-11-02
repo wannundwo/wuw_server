@@ -1,12 +1,13 @@
 'use strict';
 
-// import the express router
 var router = require('express').Router();
 
-// route /news
+// on routes that end in /printers
 router.route('/')
 
-    // GET
+    /*
+     * Returns all printers.
+     */
     .get(function(req, res) {
 
         var printers = [

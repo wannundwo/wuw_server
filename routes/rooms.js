@@ -1,18 +1,14 @@
 'use strict';
 
-// old /freeRooms is now /rooms/free !!!
-
-// import the express router
 var router = require('express').Router();
-
-// create model
 var Lecture = require('../models/model_lecture');
-
 
 // on routes that end in /rooms
 router.route('/')
 
-    // get all rooms (GET /$apiBaseUrl/rooms)
+    /*
+     * Returns all rooms, if free or not doesn't matter.
+     */
     .get(function(req, res) {
         // querys for all rooms and aggregate to one doc
         Lecture.aggregate([ { $unwind: '$rooms' }, { $group: { _id: 'rooms', rooms: { $addToSet: '$rooms' } } } ]).exec(function(err, rooms) {
@@ -22,20 +18,21 @@ router.route('/')
         });
     });
 
-
 // on routes that end in /rooms/free
 router.route('/free')
 
-    // get all (probably) free rooms (GET /$apiBaseUrl/freeRooms)
+    /*
+     * Returns all rooms, which are based on our information, should be free.
+     */
     .get(function(req, res) {
 
         // get all rooms (in db)
         Lecture.aggregate([ { $unwind: '$rooms' }, { $group: { _id: 'rooms', rooms: { $addToSet: '$rooms' } } } ]).exec(function(err, rooms) {
-            if (err) { res.status(500).send(err); }
+            if (err) { next(err); return; }
 
             // get rooms currently in use
             Lecture.aggregate([ { $match: { startTime: { '$lte': new Date() }, endTime: { '$gte': new Date() } } }, { $unwind: '$rooms' }, { $group: { _id: 'rooms', rooms: { $addToSet: '$rooms' } } } ]).exec(function(err, usedRooms) {
-                if (err) { res.status(500).send(err); }
+                if (err) { next(err); return; }
 
                 // filter used rooms by comparing both arrays
                 var freeRooms;
@@ -55,6 +52,5 @@ router.route('/free')
             });
         });
     });
-
 
 module.exports = router;

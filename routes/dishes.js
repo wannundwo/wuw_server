@@ -1,16 +1,14 @@
 'use strict';
 
-// import the express router
 var router = require('express').Router();
-
-// create model
 var Dish = require('../models/model_dish');
 
-
-// route /dishes
+// on routes that end in /dishes
 router.route('/')
 
-    // GET
+    /*
+     * Returns all dishes since today 00:00 o'clock.
+     */
     .get(function(req, res) {
 
         // today at 0:00
@@ -24,19 +22,5 @@ router.route('/')
             res.end();
         });
     });
-
-
-// route /dishes/:dish_id
-router.route('/:dish_id')
-
-    // get item by id
-    .get(function(req, res) {
-        Dish.findById(req.params.dish_id, function(err, dish) {
-            if (err) { res.status(500).send(err); }
-            res.status(200).json(dish);
-            res.end();
-        });
-    });
-
 
 module.exports = router;

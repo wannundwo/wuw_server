@@ -1,22 +1,16 @@
 'use strict';
 
-// old /upcomingLectures is now /lectures/upcoming !!!
-// old /lecturesForGroups is now /lectures/groups !!!
-
-// import the express router
 var router = require('express').Router();
-
 var moment = require('moment');
-
-// create model
 var Lecture = require('../models/model_lecture');
 var User = require('../models/model_user');
-
 
 // on routes that end in /lectures
 router.route('/')
 
-    // get all lectures (GET /$apiBaseUrl/lectures)
+    /*
+     * Returns all lectures.
+     */
     .get(function(req, res) {
         Lecture.find({}).sort({startTime: 1}).limit(100).exec(function(err, lectures) {
             if (err) { res.status(500).send(err); }
@@ -28,14 +22,10 @@ router.route('/')
 // on routes that end in /lectures/users/:user_id
 router.route('/users/:user_id')
 
-    // get all lectures (GET /$apiBaseUrl/lectures)
-    .get(function(req, res) {
-
-        // get monday of the current week
-        // var mon = moment().day(1);
-        // mon.hour(0);
-        // mon.minute(0);
-        // mon.seconds(0);
+    /*
+     * Returns all upcoming lectures for the given user id.
+     */
+    .get(function(req, res, next) {
 
         // today at 0:00
         var today = new Date();
@@ -45,8 +35,18 @@ router.route('/users/:user_id')
 
         // get the users selected lectures
         User.findOne({'deviceId': req.params.user_id}, function(err, user) {
-            if (err) { res.status(500).send(err); }
-            if (user === null) { res.status(500).send('deviceId not found'); return;}
+            if (err) {
+                next(err);
+                return;
+            }
+
+            if (!user) {
+                var err = new Error();
+                err.status = 404;
+                err.message = "User ID not found.";
+                next(err);
+                return;
+            }
 
             var selectedLectures = user.selectedLectures.toObject();
             var selectedGroupsArr = [];
@@ -60,7 +60,7 @@ router.route('/users/:user_id')
             var query = {groups: {$in: selectedGroupsArr}, lectureName: {$in: selectedLecturesArr}, startTime: {'$gte': today, '$lte': laterDate}};
 
             Lecture.find(query).sort({startTime: 1}).exec(function(err, lectures) {
-                if (err) { res.status(500).send(err); }
+                if (err) { next(err); return; }
                 res.status(200).json(lectures);
                 res.end();
             });
