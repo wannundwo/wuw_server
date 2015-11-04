@@ -11,17 +11,25 @@ router.route('/lectures/:user_id')
      * Returns all available Groups with its lectures
      * with markers which groups & lectures are selected by the given user
      */
-    .get(function(req, res) {
+    .get(function(req, res, next) {
 
         // querys for all groups & their lectures and aggregate
-        Lecture.aggregate( [ { $unwind: '$groups' }, { $group: { _id: '$groups', lectures: { $push: '$lectureName' } } }, { $unwind: '$lectures' }, { $group: { _id: '$_id', lectures: { $addToSet: '$lectures' } } }, { $unwind: '$lectures' }, { $sort: { lectures: 1 } }, { $group: { _id: '$_id', lectures: { $push: '$lectures' } } }, { $sort: { _id: 1 } } ] ).exec(function(err, groups) {
+        Lecture.aggregate([
+          { $unwind: '$groups' },
+          { $group: { _id: '$groups', lectures: { $push: '$lectureName' } } },
+          { $unwind: '$lectures' },
+          { $group: { _id: '$_id', lectures: { $addToSet: '$lectures' } } },
+          { $unwind: '$lectures' },
+          { $sort: { lectures: 1 } },
+          { $group: { _id: '$_id', lectures: { $push: '$lectures' } } },
+          { $sort: { _id: 1 } } ] ).exec(function(err, groups) {
             if (err) { next(err); return; }
 
             // get the users selected lectures
             User.findOne({'deviceId': req.params.user_id}, function(err, user) {
                 var usersSelectedLectures = [];
                 if (user) {
-                   var usersSelectedLectures = user.selectedLectures;
+                    usersSelectedLectures = user.selectedLectures;
                 }
 
                 for (var i = 0; i < groups.length; i++) {
@@ -36,8 +44,8 @@ router.route('/lectures/:user_id')
 
                     // mark every lecture which the user has selected as selected;
                     var lecturesInGroup = groups[i].lectures;
-                    for (var j = 0; j < lecturesInGroup.length; j++) {
-                        lecturesInGroup[j] = {lectureName: lecturesInGroup[j] , selectedByUser: false}
+                    for (j = 0; j < lecturesInGroup.length; j++) {
+                        lecturesInGroup[j] = {lectureName: lecturesInGroup[j] , selectedByUser: false};
                         // search this lecture in the users selected lectures
                         for (var k = 0; k < usersSelectedLectures.length; k++) {
                             if (lecturesInGroup[j].lectureName === usersSelectedLectures[k].lectureName &&

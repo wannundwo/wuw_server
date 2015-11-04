@@ -10,7 +10,7 @@ router.route('/:deviceId/lectures')
     /*
      * Creates an user, and/or updates his selected lectures.
      */
-    .post(function(req, res) {
+    .post(function(req, res, next) {
         // create instance of User model
         var user = new User();
 

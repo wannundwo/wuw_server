@@ -24,7 +24,7 @@ router.route('/free')
     /*
      * Returns all rooms, which are based on our information, should be free.
      */
-    .get(function(req, res) {
+    .get(function(req, res, next) {
 
         // get all rooms (in db)
         Lecture.aggregate([ { $unwind: '$rooms' }, { $group: { _id: 'rooms', rooms: { $addToSet: '$rooms' } } } ]).exec(function(err, rooms) {

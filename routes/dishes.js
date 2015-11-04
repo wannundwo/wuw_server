@@ -9,7 +9,7 @@ router.route('/')
     /*
      * Returns all dishes since today 00:00 o'clock.
      */
-    .get(function(req, res) {
+    .get(function(req, res, next) {
 
         // today at 0:00
         var today = new Date();
@@ -17,7 +17,7 @@ router.route('/')
 
         // get all upcoming (incl current day) entries
         Dish.find({'date': {'$gte': today}}).sort({date: 1, priceInternal: 1}).limit(60).exec(function(err, dishes) {
-            if (err) { res.status(500).send(err); }
+            if (err) { next(err); return; }
             res.status(200).json(dishes);
             res.end();
         });

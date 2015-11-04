@@ -11,7 +11,7 @@ router.route('/user/:user_id')
     /*
      * Returns all deadlines for the given user.
      */
-    .get(function(req, res) {
+    .get(function(req, res, next) {
 
         // get date of yesterday
         var yesterday = new Date();
@@ -21,10 +21,10 @@ router.route('/user/:user_id')
         User.findOne({'deviceId': req.params.user_id}, function(err, user) {
             if (err) { next(err); return; }
             if (!user) {
-                var err = new Error();
-                err.status = 404;
-                err.message = "User ID not found.";
-                next(err);
+                var noUserErr = new Error();
+                noUserErr.status = 404;
+                noUserErr.message = "User ID not found.";
+                next(noUserErr);
                 return;
             }
 
@@ -45,7 +45,7 @@ router.route('/')
     /*
      * Returns all "active" deadlines.
      */
-    .get(function(req, res) {
+    .get(function(req, res, next) {
 
         // get date of yesterday
         var yesterday = new Date();

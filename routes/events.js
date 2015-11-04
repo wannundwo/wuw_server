@@ -10,7 +10,7 @@ router.route('/')
     /*
      * Returns all events since today 00:00 o'clock.
      */
-    .get(function(req, res) {
+    .get(function(req, res, next) {
 
         // today at 0:00
         var today = new Date();

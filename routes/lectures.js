@@ -41,10 +41,10 @@ router.route('/users/:user_id')
             }
 
             if (!user) {
-                var err = new Error();
-                err.status = 404;
-                err.message = "User ID not found.";
-                next(err);
+                var noUserErr = new Error();
+                noUserErr.status = 404;
+                noUserErr.message = "User ID not found.";
+                next(noUserErr);
                 return;
             }
 

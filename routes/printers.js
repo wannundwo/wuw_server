@@ -83,7 +83,7 @@ router.route('/')
                 "Duplex": "ja",
                 "Farbe": "nein"
             }
-        ]
+        ];
 
         res.status(200).json(printers);
         res.end();
