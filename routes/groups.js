@@ -14,7 +14,7 @@ router.route('/lectures/:user_id')
     .get(function(req, res) {
 
         // querys for all groups & their lectures and aggregate
-        Lecture.aggregate( [ { $unwind: '$groups' }, { $group: { _id: '$groups', lectures: { $addToSet: '$lectureName' } } }, {$sort: { _id: 1}} ] ).exec(function(err, groups) {
+        Lecture.aggregate( [ { $unwind: '$groups' }, { $group: { _id: '$groups', lectures: { $push: '$lectureName' } } }, { $unwind: '$lectures' }, { $group: { _id: '$_id', lectures: { $addToSet: '$lectures' } } }, { $unwind: '$lectures' }, { $sort: { lectures: 1 } }, { $group: { _id: '$_id', lectures: { $push: '$lectures' } } }, { $sort: { _id: 1 } } ] ).exec(function(err, groups) {
             if (err) { next(err); return; }
 
             // get the users selected lectures
