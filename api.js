@@ -25,6 +25,8 @@ var parser = {
 var apiVersion = 0;
 var apiBaseUrl = '/api/v' + apiVersion;
 
+// write pid
+fs.writeFile("/tmp/wuw-api.pid", process.pid);
 
 // ssl
 try {
