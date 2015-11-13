@@ -47,6 +47,9 @@ router.route('/free')
                     freeRooms = rooms[0].rooms;
                 }
 
+                // js sorting, maybe do it on mongo
+                freeRooms = freeRooms.sort();
+
                 res.status(200).json(freeRooms);
                 res.end();
             });
