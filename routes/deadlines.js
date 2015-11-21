@@ -95,7 +95,7 @@ router.route('/')
         // save deadline in mongodb
         deadline.save(function(err, deadline) {
             if (err) { next(err); return; }
-            res.status(200).json({ message: 'Deadline created!', id: deadline.id });
+            res.status(200).json(deadline);
         });
     });
 
