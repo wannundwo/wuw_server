@@ -71,6 +71,11 @@ var startParser = function() {
                                 eventObj.endTime = null;
                             }
 
+                            // starttime 01:00 means "don't set any starttime at all"
+                            if (eventObj.startTime.getHours() === 1) {
+                                eventObj.hasTime = false;
+                            }
+
                             eventObj.created = new Date(ev.created);
                             eventObj.modified = new Date(ev.modified);
                             // filter 'null' values from attributes
