@@ -28,7 +28,7 @@ var scriptName = path.basename(module.filename, path.extname(module.filename));
 // main function
 var startParser = function() {
     // connect to mongodb (if not already)
-    if(mongoose.connection.readyState === 0) {
+    if (mongoose.connection.readyState === 0) {
         mongoose.connect(mongoConnection);
     }
 
@@ -42,12 +42,12 @@ var startParser = function() {
 
     // fetch xml
     request(url, function(err, response, xml) {
-        if(err) { console.log(err); }
+        if (err) { console.log(err); }
         else {
 
             // parse xml
             parseString(xml, { explicitArray: false, normalize: true }, function (err, result) {
-                if(err) { console.log(err); }
+                if (err) { console.log(err); }
                 else {
 
                     // drop current collection to get a fresh result
@@ -65,10 +65,23 @@ var startParser = function() {
                             eventObj.location = ev.Location;
                             eventObj.startTime = new Date(ev.start.slice(0, -6));
                             eventObj.endTime = new Date(ev.ende.slice(0, -6));
+
+                            // if start and endtime are equal, remove the endtime
+                            if (eventObj.startTime.getTime() === eventObj.endTime.getTime()) {
+                                eventObj.endTime = null;
+                            }
+
+                            // starttime 01:00 means "don't set any starttime at all"
+                            if (eventObj.startTime.getHours() === 1) {
+                                eventObj.startTime = null;
+                            }
+
                             eventObj.created = new Date(ev.created);
                             eventObj.modified = new Date(ev.modified);
                             // filter 'null' values from attributes
-                            if(ev.Description !== 'None') { eventObj.descr = ev.Description; }
+                            if (ev.Description !== 'None') {
+                                eventObj.descr = ev.Description;
+                            }
 
                             // add base-url if not present
                             if(ev.Event_Url !== '') {
