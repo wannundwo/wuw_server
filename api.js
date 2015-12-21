@@ -144,7 +144,7 @@ app.use(function(err, req, res, next) {
 // schedule parser jobs
 var jobs = [
     // parser_lsf
-    schedule.scheduleJob('45 4 * * *', function(){
+    schedule.scheduleJob('45 * * * *', function(){
         parser.lsf.startParser();
     }),
     // parser_mensa
@@ -152,11 +152,11 @@ var jobs = [
         parser.mensa.startParser();
     }),
     // parser_news
-    schedule.scheduleJob('25 4 * * *', function(){
+    schedule.scheduleJob('25 * * * *', function(){
         parser.news.startParser();
     }),
     // parser_events
-    schedule.scheduleJob('15 4 * * *', function(){
+    schedule.scheduleJob('15 * * * *', function(){
         parser.events.startParser();
     })
 ];
