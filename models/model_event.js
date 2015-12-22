@@ -11,8 +11,6 @@ var EventSchema = new mongoose.Schema({
     contact: String,
     location: String,
     startTime: Date,
-    // if starttime is set to 01:00, we don't want to display the time, only the date
-    hasTime: {type: Boolean, default: true},
     endTime: Date,
     created: Date,
     modified: Date

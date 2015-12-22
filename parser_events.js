@@ -66,16 +66,6 @@ var startParser = function() {
                             eventObj.startTime = new Date(ev.start.slice(0, -6));
                             eventObj.endTime = new Date(ev.ende.slice(0, -6));
 
-                            // if start and endtime are equal, remove the endtime
-                            if (eventObj.startTime.getTime() === eventObj.endTime.getTime()) {
-                                eventObj.endTime = null;
-                            }
-
-                            // starttime 01:00 means "don't set any starttime at all"
-                            if (eventObj.startTime.getHours() === 1) {
-                                eventObj.hasTime = false;
-                            }
-
                             eventObj.created = new Date(ev.created);
                             eventObj.modified = new Date(ev.modified);
                             // filter 'null' values from attributes
