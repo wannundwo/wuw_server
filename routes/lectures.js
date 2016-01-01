@@ -57,7 +57,7 @@ router.route('/users/:user_id')
                 selectedLecturesArr.push(selectedLectures[i].lectureName);
             }
 
-            var query = {groups: {$in: selectedGroupsArr}, lectureName: {$in: selectedLecturesArr}, startTime: {'$gte': today, '$lte': laterDate}};
+            var query = {groups: {$in: selectedGroupsArr}, lectureName: {$in: selectedLecturesArr}, startTime: {'$gte': today, '$lte': laterDate}, canceled: false};
 
             Lecture.find(query).sort({startTime: 1}).exec(function(err, lectures) {
                 if (err) { next(err); return; }
@@ -80,7 +80,7 @@ router.route('/upcoming')
         mon.seconds(0);
 
         var reqGroups = JSON.parse(req.body.groups || '[]');
-        var query = { groups: { $in: reqGroups }, 'startTime': {'$gte': mon}};
+        var query = { groups: { $in: reqGroups }, 'startTime': {'$gte': mon}, canceled: false};
 
         // if no reqGroups provided, return all lectures
         if (reqGroups.length === 0) {
@@ -112,7 +112,7 @@ router.route('/groups')
         today.setHours(0,0,0,0);
 
         var reqGroups = JSON.parse(req.body.groups || '[]');
-        var query = { groups: { $in: reqGroups }, 'endTime': {'$gte': today}};
+        var query = { groups: { $in: reqGroups }, 'endTime': {'$gte': today}, canceled: false};
 
         // if no reqGroups provided, return all lectures
         if (reqGroups.length === 0) {
@@ -149,7 +149,7 @@ router.route('/weekly')
         sun.seconds(59);
 
         var reqGroups = JSON.parse(req.body.groups || '[]');
-        var query = { groups: { $in: reqGroups }, 'startTime': {'$gte': mon}, 'endTime': {'$lte': sun}};
+        var query = { groups: { $in: reqGroups }, 'startTime': {'$gte': mon}, 'endTime': {'$lte': sun}, canceled: false};
 
         // if no reqGroups provided, return all lectures
         if (reqGroups.length === 0) {

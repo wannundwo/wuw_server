@@ -70,6 +70,7 @@ var startParser = function() {
 
                             // create Lecture from our Model
                             var Lec = new Lecture();
+
                             // set attributes
                             Lec.lectureName = lecture.title;
                             Lec.startTime = new Date(lecture.start);
@@ -77,6 +78,14 @@ var startParser = function() {
                             Lec.docents = lecture.personname;
                             Lec.hashCode = utils.hashCode(Lec.lectureName+Lec.startTime);
                             Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
+
+                            // check for cancellations
+                            if (parseInt(lecture.OutTerm) === 1) {
+                                Lec.canceled = true;
+                                Lec.canceledText = lecture.OutTermText;
+                            } else {
+                                Lec.canceled = false;
+                            }
 
                             // create an object from our document
                             var upsertData = Lec.toObject();
