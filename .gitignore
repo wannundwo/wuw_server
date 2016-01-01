@@ -29,6 +29,8 @@ node_modules
 
 # ssl
 ssl*
+# dh key param
+dh_*
 
 # test data
 test/data/*.xml
