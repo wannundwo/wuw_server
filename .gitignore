@@ -28,7 +28,7 @@ node_modules
 .lock-wscript
 
 # ssl
-ssl-*
+ssl*
 
 # test data
 test/data/*.xml
