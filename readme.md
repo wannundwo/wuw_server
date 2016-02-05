@@ -1,19 +1,18 @@
-#This is the wuw server.
+# This is the wuw server.
 [![Build Status](https://travis-ci.org/wannundwo/wuw_server.svg?branch=master)](https://travis-ci.org/wannundwo/wuw_server)
 [![bitHound Score](https://www.bithound.io/github/wannundwo/wuw_server/badges/score.svg?)](https://www.bithound.io/github/wannundwo/wuw_server)
 
-## Start the wuw-api like this:  
-1. install & start a local mongodb instance (http://docs.mongodb.org/manual/installation/)  
-2. `npm install`  
-3. `node api.js`  
-4. open `http://localhost:8088/api/v0` in your browser  
-Use something like Postman (http://www.getpostman.com/) to test it  
 
+## setup / install dependencies
+* `npm install`
+* install & start a local mongodb instance
 
-## Try the wuw-parser with this:  
-1. `npm install`  
-2. `node parser_lsf.js`
+## start the wuw-api
+* `node api.js`  
+* open `http://localhost:8088/api/v0`
 
-## Unit Tests
-1. `npm install -g mocha`
-2. `mocha` or `npm test`
+## standalone parser run
+* `node parser_{events,mensa,news,xml}.js`
+
+## tests
+* `npm test`
