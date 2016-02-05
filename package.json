@@ -5,8 +5,8 @@
   "main": "api.js",
   "author": "www.github.com/wannundwo",
   "devDependencies": {
-    "istanbul": "latest",
-    "mocha": "latest"
+    "istanbul": "~0.4.2",
+    "mocha": "~2.4.5"
   },
   "dependencies": {
     "async": "~1.5.2",
