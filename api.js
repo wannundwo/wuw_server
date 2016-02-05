@@ -85,7 +85,9 @@ var router = express.Router();
 var apiPort = process.env.WUWPORT || 4342;
 
 // use morgan to log
-app.use(morgan('dev'));
+if(process.env.NODE_ENV !== 'test') {
+    app.use(morgan('dev'));
+}
 
 // configure body parser
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -132,11 +134,13 @@ app.get('*', function(req, res, next) {
 
 // handle error
 app.use(function(err, req, res, next) {
-    console.error({
-        status: err.status,
-        message: err.message,
-        stack: err.stack.split('\n')
-    });
+    if(process.env.NODE_ENV !== 'test') {
+        console.error({
+            status: err.status,
+            message: err.message,
+            stack: err.stack.split('\n')
+        });
+    }
     res.status(err.status || 500).send({ error: err.message });
 });
 
