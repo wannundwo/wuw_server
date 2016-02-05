@@ -1,11 +1,12 @@
 {
   "name": "wuw_server",
   "version": "0.0.1",
-  "description": "scrape the lsf to collect curses with room and time.",
+  "description": "wuw api server",
   "main": "api.js",
   "author": "www.github.com/wannundwo",
   "devDependencies": {
-    "mocha": "~2.3.3"
+    "istanbul": "latest",
+    "mocha": "latest"
   },
   "dependencies": {
     "async": "~1.4.2",
@@ -23,6 +24,6 @@
     "xml2js": "~0.4.12"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "istanbul cover _mocha"
   }
 }
