@@ -36,10 +36,15 @@ router.route('/free')
 
                 // filter used rooms by comparing both arrays
                 var freeRooms;
+                var count = Array.apply(null, Array(10)).map(Number.prototype.valueOf,0);
+
                 if(usedRooms[0] && usedRooms[0].rooms) {
+                    shuffle(rooms[0].rooms);
                     freeRooms = rooms[0].rooms.filter(function(e) {
-                        if(e) {
-                            return (e.match(/\d\/\d\d\d ?.*/) && usedRooms[0].rooms.indexOf(e) < 0);
+                        var building = e.split("/")[0];
+                        if(e && (e.match(/\d\/\d\d\d ?.*/)) && usedRooms[0].rooms.indexOf(e) < 0) {
+                            count[building] = (count[building] + 1);
+                            return (count[building] <= 10);
                         }
                     });
                 } else {
@@ -55,5 +60,21 @@ router.route('/free')
             });
         });
     });
+
+/**
+ * Shuffles array in place.
+ * @param {Array} a items The array containing the items.
+ * @return {Array} a The shuffled array
+ */
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i -= 1) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
 
 module.exports = router;
