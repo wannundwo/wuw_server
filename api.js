@@ -2,6 +2,7 @@
 'use strict';
 
 // import packages (api)
+var bunyan = require('bunyan');
 var express = require('express');
 var expressValidator = require('express-validator');
 var bodyParser = require('body-parser');
@@ -11,6 +12,17 @@ var morgan = require('morgan');
 var https = require('https');
 var fs = require('fs');
 var schedule = require('node-schedule');
+
+// logging
+var log;
+if(process.env.WUWDEV) {
+    log = bunyan.createLogger({name: "wuw-hft-dev", level: 'info', stream: process.stdout});
+} else {
+    log = bunyan.createLogger({name: "wuw-hft", streams: [
+        {level: 'error', stream: process.stdout},
+        {level: 'info', type: 'rotating-file', path: '/var/log/wuw-hft/wuw-hft.log', period: '1w', count: 5}
+    ]});
+}
 
 // import parser modules
 var parser = {
@@ -167,17 +179,13 @@ var jobs = [
 
 
 // start the server
-console.log('\n* starting the wuw api\n');
-console.log('  mongodb:  ' + mongoConnection);
-console.log('  ssl:      ' + use_ssl);
+var serverInfo = {ssl: use_ssl, mongodb: mongoConnection, apiPort: apiPort};
 if (use_ssl) {
     var server = https.createServer(https_options, app).listen(apiPort);
-    console.log('  url:      https://localhost:' + apiPort + apiBaseUrl);
 } else {
     var server = app.listen(apiPort);
-    console.log('  url:      http://localhost:' + apiPort + apiBaseUrl);
 }
-console.log();
+log.info(serverInfo, 'started successfully');
 
 
 // starter & stopper functions for testing
