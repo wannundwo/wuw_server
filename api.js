@@ -27,7 +27,7 @@ if(process.env.NODE_ENV === 'dev') {
     morganLogStream = process.stdout;
 } else {
     // check if logDir is accessable
-    fs.accessSync(logDir) || fs.mkdirSync(logDir);
+    fs.accessSync(logDir);
 
     log = bunyan.createLogger({name: "wuw-hft", streams: [
         {level: 'info', stream: process.stdout},
