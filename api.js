@@ -1,27 +1,46 @@
 // wuw server
 'use strict';
 
-// import packages (api)
+// core
+var fs = require('fs');
+var https = require('https');
+var util = require('util');
+// npm
+var bodyParser = require('body-parser');
 var bunyan = require('bunyan');
 var express = require('express');
 var expressValidator = require('express-validator');
-var bodyParser = require('body-parser');
-var util = require('util');
+var fileStreamRotator = require('file-stream-rotator');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
-var https = require('https');
-var fs = require('fs');
 var schedule = require('node-schedule');
 
+
 // logging
-var log;
-if(process.env.WUWDEV) {
+var logDir = '/var/log/wuw-hft';
+var log, morganFormat, morganLogStream;
+
+if(process.env.NODE_ENV === 'dev') {
     log = bunyan.createLogger({name: "wuw-hft-dev", level: 'info', stream: process.stdout});
+
+    morganFormat = 'dev';
+    morganLogStream = process.stdout;
 } else {
+    // check if logDir is accessable
+    fs.accessSync(logDir) || fs.mkdirSync(logDir);
+
     log = bunyan.createLogger({name: "wuw-hft", streams: [
-        {level: 'error', stream: process.stdout},
-        {level: 'info', type: 'rotating-file', path: '/var/log/wuw-hft/wuw-hft.log', period: '1w', count: 5}
+        {level: 'info', stream: process.stdout},
+        {level: 'info', type: 'rotating-file', path: logDir + '/wuw-hft.log', period: '1d', count: 30}
     ]});
+
+    morganFormat = 'combined';
+    morganLogStream = fileStreamRotator.getStream({
+        date_format: 'YYYYMMDD',
+        filename: logDir + '/access-%DATE%.log',
+        frequency: 'daily',
+        verbose: false
+    });
 }
 
 // import parser modules
@@ -97,9 +116,7 @@ var router = express.Router();
 var apiPort = process.env.WUWPORT || 4342;
 
 // use morgan to log
-if(process.env.NODE_ENV !== 'test') {
-    app.use(morgan('dev'));
-}
+app.use(morgan(morganFormat, {stream: morganLogStream}));
 
 // configure body parser
 app.use(bodyParser.urlencoded({ extended: true }));
