@@ -96,7 +96,7 @@ var startParser = function() {
                             // add room if all needed info is present
                             var room;
                             if(lecture.bau && lecture.Raum[0]) {
-                                room = lecture.bau + '/' + lecture.Raum[0];
+                                room = String(lecture.bau).replace('7', 'L') + '/' + lecture.Raum[0];
                             }
 
                             // add dummy group if needed
