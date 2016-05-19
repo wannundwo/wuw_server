@@ -27,10 +27,19 @@ router.route('/users/:user_id')
      */
     .get(function(req, res, next) {
 
-        // today at 0:00
-        var today = new Date();
-        today.setHours(0,0,0,0);
-        var laterDate = new Date();
+        var startTime;
+        if (req.query.weekly === "true") {
+            startTime = moment().day(1);
+            startTime.hour(0);
+            startTime.minute(0);
+            startTime.seconds(0);
+        } else {
+            // today at 0:00
+            startTime = new Date();
+            startTime.setHours(0,0,0,0);
+        }
+
+        var laterDate = new Date();    
         laterDate.setDate(laterDate.getDate() + 21);
 
         // get the users selected lectures
@@ -57,7 +66,7 @@ router.route('/users/:user_id')
                 selectedLecturesArr.push(selectedLectures[i].lectureName);
             }
 
-            var query = {groups: {$in: selectedGroupsArr}, lectureName: {$in: selectedLecturesArr}, startTime: {'$gte': today, '$lte': laterDate}, canceled: false};
+            var query = {groups: {$in: selectedGroupsArr}, lectureName: {$in: selectedLecturesArr}, startTime: {'$gte': startTime, '$lte': laterDate}, canceled: false};
 
             Lecture.find(query).sort({startTime: 1}).exec(function(err, lectures) {
                 if (err) { next(err); return; }
