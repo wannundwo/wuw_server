@@ -76,7 +76,7 @@ var startParser = function() {
                             Lec.startTime = new Date(lecture.start);
                             Lec.endTime = new Date(lecture.ende);
                             Lec.docents = lecture.personname;
-                            Lec.hashCode = utils.hashCode(Lec.lectureName+Lec.startTime);
+                            
                             Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
 
                             // check for cancellations
@@ -86,6 +86,8 @@ var startParser = function() {
                             } else {
                                 Lec.canceled = false;
                             }
+
+                            Lec.hashCode = utils.hashCode(Lec.lectureName + Lec.startTime + Lec.canceled);
 
                             // create an object from our document
                             var upsertData = Lec.toObject();
@@ -116,7 +118,7 @@ var startParser = function() {
                                 // save lecture to db & call callback
                                 var q = { groups: group };
                                 if (room) {q.rooms = room;}
-                                Lecture.update({ _id: Lec.id }, { $set: upsertData, $addToSet: q  }, { upsert: true }, function() {
+                                Lecture.update({ _id: Lec.id, canceled: Lec.canceled}, { $set: upsertData, $addToSet: q  }, { upsert: true }, function() {
 
                                     // incr counter
                                     addedLectures++;
