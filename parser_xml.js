@@ -76,8 +76,6 @@ var startParser = function() {
                             Lec.startTime = new Date(lecture.start);
                             Lec.endTime = new Date(lecture.ende);
                             Lec.docents = lecture.personname;
-                            
-                            Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
 
                             // check for cancellations
                             if (parseInt(lecture.OutTerm) === 1) {
@@ -88,6 +86,7 @@ var startParser = function() {
                             }
 
                             Lec.hashCode = utils.hashCode(Lec.lectureName + Lec.startTime + Lec.canceled);
+                            Lec._id = mongoose.Types.ObjectId(Lec.hashCode);
 
                             // create an object from our document
                             var upsertData = Lec.toObject();
