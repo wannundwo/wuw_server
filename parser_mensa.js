@@ -56,10 +56,12 @@ var parse = function(html, cb) {
                 // get the price
                 var prices = $(e).first().contents().filter(function() {
                     return this.type === 'text';
-                }).text().trim().split(' / ');
+                }).text().trim().split('€: ');
+                prices = prices[1].trim();
+                prices = prices.split(" / ");
 
                 // if prices exists, split to internal and external
-                if(prices.length === 2) {
+                if (prices.length === 2) {
                     curDish.priceInternal = prices[0].replace(',', '.');
                     curDish.priceExternal = prices[1].replace(',', '.');
                 }
@@ -84,7 +86,12 @@ var parse = function(html, cb) {
                 }
 
                 // save to database
-                curDish.save(dishcb);
+                curDish.save(function (err, dish, numAffected) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    dishcb();    
+                });
 
             // side dishes & sweets
             // } else if (i === 6 || i === 7) {
