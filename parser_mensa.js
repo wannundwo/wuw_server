@@ -30,15 +30,16 @@ var parse = function(html, cb) {
 
     // init cheerio with our html
     var $ = cheerio.load(html);
-    var fullWeek = $('div.print-content div.view div.view-content div.item-list ul').children();
+    var fullWeekDom = $('body div.print-content div div.view-content div ul');
+    var fullWeek = $('.node-type-canteen_menu');
 
     // parse each week of food
     async.each(fullWeek, function(dayPlan, daycb) {
 
+        dayPlan = dayPlan.parent;
         var curDate = $(dayPlan).find('span.date-day-numeric').html().trim();
         var curDateArr = curDate.split('.');
         var intDate = curDateArr[1] + '/' + curDateArr[0] + '/' + curDateArr[2];
-
         var i = 0;
         async.each($(dayPlan).find('td.speiseangebotbody'), function(e, dishcb) {
 
@@ -50,7 +51,6 @@ var parse = function(html, cb) {
                 curDish.dishName = $(e).find('span.name').text();
                 curDish.shortCat = i;
                 curDish.date = Date.parse(intDate);
-
                 var additiveNumber = $(e).find('span.additive_number');
 
                 // get the price
