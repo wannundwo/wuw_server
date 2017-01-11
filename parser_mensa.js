@@ -51,6 +51,7 @@ var parse = function(html, cb) {
                 curDish.dishName = $(e).find('span.name').text();
                 curDish.shortCat = i;
                 curDish.date = Date.parse(intDate);
+                curDish.date.setHours(12);
                 var additiveNumber = $(e).find('span.additive_number');
 
                 // get the price
