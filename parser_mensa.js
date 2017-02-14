@@ -63,24 +63,37 @@ var parse = function(html, cb) {
 
                 // if prices exists, split to internal and external
                 if (prices.length === 2) {
-                    curDish.priceInternal = prices[0].replace(',', '.');
-                    curDish.priceExternal = prices[1].replace(',', '.');
+                    var priceInternal = prices[0].replace(',', '.');
+                    var priceExternal = prices[1].replace(',', '.');
+
+                    if (isNaN(priceInternal)) {
+                        Console.e("price internal is not a number");
+                    }
+
+                    if (isNaN(priceExternal)) {
+                        priceExternal = priceExternal.split(" ")[0];
+                    }
+                    curDish.priceInternal = priceInternal;
+                    curDish.priceExternal = priceExternal;
                 }
 
                 // prepare attributes, allergens & additives
-                if(additiveNumber) {
+                if (additiveNumber) {
                     $(additiveNumber).each(function(i, e) {
                         // split to single strings/numbers
                         var adds = $(e).html().split(',');
                         // allergens
-                        if(i === 0) {
+                        if (i === 0) {
                             adds.forEach(function(add) {
                                 curDish.shortAllerg.push(add);
                             });
                         // additives
                         } else if(i === 1) {
                             adds.forEach(function(add) {
-                                curDish.shortAdd.push(add);
+                                if (!isNaN(add)) {
+                                    curDish.shortAdd.push(add);
+                                }
+                                
                             });
                         }
                     });
